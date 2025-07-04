@@ -6,15 +6,17 @@ player has 2 fields initialized by the constructor,
 bankroll, which represents the amount of money the player has
 and name, which reflects the player's name.
 """
-import stats
-import hand
 
-class Player():
-    def __init__(self,name,bankroll):
+from .stats import Stats
+
+
+class Player:
+    def __init__(self, name, bankroll):
         self.name = name
         self.bankroll = bankroll
-        self.stats = stats.Stats()
+        self.stats = Stats()
         self.hand = None
+
     def get_name(self):
         return self.name
 

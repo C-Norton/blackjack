@@ -1,20 +1,36 @@
 """
 Game handles the flow of play
 """
+
 import collections
 import random
 
-import player
-import stats
-from card import Card
-from player import Player
-from value import Value
-from suit import Suit
-def new_hand():
-    """
+from .card import Card
+from .player import Player
+from .dealer import Dealer
+from .suit import Suit
+from .value import Value
 
+
+def new_hand(player, deck):
+    """
+    Deals a new hand, plays the game, and returns a tuple of a result and the net change to bankroll
+    Order of operations:
+        player antes
+        Deal cards to dealer
+        Deal cards to player
+        Until both players have STAND on all hands:
+            Accept Player move
+            Accept dealer move
+        Dealer reveals hidden card
+        Resolve the hand
+        Update player
+        Save stats
     :return:
     """
+    deck = generate_deck()
+    dealer = Dealer()
+
 
 def new_player():
     print("======= New Player =======")
@@ -27,10 +43,12 @@ def new_player():
             print("Invalid bankroll; please enter an integer")
     return Player(name, bankroll)
 
-def load_player(playername):
-    return player.Player()
-def main_menu():
 
+def load_player(playername):
+    return Player()
+
+
+def main_menu():
     """
     Option 1: Play new game, select player
     Option 2: Make a New Player
@@ -64,12 +82,12 @@ def main_menu():
             print("Please enter a value between 1 and 3. Exiting")
             return
 
-@staticmethod
+
 def generate_deck():
     deck = collections.deque()
     for suit in Suit:
         for value in Value:
-            card = Card(suit,value)
+            card = Card(suit, value)
             deck.append(card)
     random.shuffle(deck)
     return deck

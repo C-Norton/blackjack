@@ -13,18 +13,21 @@ take_turn(Deck)
 reveal_hand() (flips all cards and prints)
 print_hand()  (prints including face down
 """
-import hand
-from move import Move
+
+from .hand import Hand
+from .move import Move
 
 
 class Dealer:
-    def __init__(self, dealer_hand=hand.Hand()):
+    def __init__(self, dealer_hand=Hand()):
         self.hand = dealer_hand
 
     def reveal_hand(self):
         pass
+
     def print_hand(self):
         pass
+
     def take_turn(self, deck):
         if self.hand.get_size() < 2:
             card = deck.popleft()
@@ -32,7 +35,7 @@ class Dealer:
                 card.flip()
             self.hand.add_card(card)
             return Move.HIT
-        elif self.hand.get_total()<17:
+        elif self.hand.get_total() < 17:
             self.hand.add_card(deck.popleft())
             return Move.HIT
         else:

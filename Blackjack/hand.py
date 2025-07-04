@@ -1,8 +1,7 @@
 import collections
 
-from card import Card
-from value import Value
-from suit import Suit
+from .card import Card
+from .value import Value
 
 
 class Hand:
@@ -11,9 +10,11 @@ class Hand:
         self.cards = collections.deque()
 
     def add_card(self, my_card: Card):
-        self.cards.append(my_card)
+        self.cards.appendleft(my_card)
+
     def get_size(self):
         return len(self.cards)
+
     def get_total(self):
         total = 0
         aces = 0
@@ -38,5 +39,5 @@ class Hand:
     def __str__(self):
         output = ""
         for card in self.cards:
-            output += str(card)+"\n"
+            output += str(card) + "\n"
         return output.strip("\n")

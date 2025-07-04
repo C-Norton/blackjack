@@ -1,5 +1,5 @@
-from suit import Suit
-from value import Value
+from .suit import Suit
+from .value import Value
 
 
 class Card:
