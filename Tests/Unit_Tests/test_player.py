@@ -8,6 +8,7 @@ CREATED ON: 7/4/2025
 
 import pytest
 import Blackjack
+import Blackjack.main_menu
 from Blackjack.player import Player
 
 
@@ -32,7 +33,7 @@ class TestPlayer:
     def test_player_creation(self, class_setup, method_setup):
 
         self.fake_input.side_effect = ["Player 1", "1000"]
-        self.player = Blackjack.game.new_player()
+        self.player = Blackjack.main_menu.new_player()
         assert type(self.player) is Player
         assert self.player.get_name() == "Player 1"
         assert self.player.get_bankroll() == 1000
@@ -42,7 +43,7 @@ class TestPlayer:
 
     def test_bad_input(self, class_setup, method_setup):
         self.fake_input.side_effect = ["Player 2", "Bad Input", "2000"]
-        self.player = Blackjack.game.new_player()
+        self.player = Blackjack.main_menu.new_player()
         assert type(self.player) is Player
 
         assert self.player.get_name() == "Player 2"

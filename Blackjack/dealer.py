@@ -40,3 +40,6 @@ class Dealer:
             return Move.HIT
         else:
             return Move.STAND
+
+    def has_busted(self):
+        pass

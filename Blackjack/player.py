@@ -14,7 +14,7 @@ class Player:
     def __init__(self, name, bankroll):
         self.name = name
         self.bankroll = bankroll
-        self.stats = Stats()
+        self.stats = Stats(bankroll)
         self.hand = None
 
     def get_name(self):
@@ -25,3 +25,21 @@ class Player:
 
     def get_bankroll(self):
         return self.bankroll
+
+    def update_bankroll(self, net_change):
+        self.bankroll += net_change
+
+    def update_stats(self, result_tuple):
+        pass
+
+    def ante(self):
+        pass
+
+    def take_turn(self, deck):
+        pass
+
+    def has_busted(self):
+        pass
+
+    def get_hand(self):
+        return None

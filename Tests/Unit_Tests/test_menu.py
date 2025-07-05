@@ -9,7 +9,9 @@ CREATED ON: 7/4/2025
 import pytest
 
 import Blackjack
+import Blackjack.main_menu
 from Blackjack import player
+from Blackjack import game
 
 
 class TestMenu:
@@ -26,12 +28,12 @@ class TestMenu:
         print(f"Setting up method: {request.function.__name__}")
         self.fake_input = mocker.patch("builtins.input")
         self.fake_print = mocker.patch("builtins.print")
-        self.new_hand = mocker.patch("Blackjack.game.new_hand", return_value="mocked")
-        self.new_player = mocker.patch(
-            "Blackjack.game.new_player", return_value="mocked"
+        self.new_hand = mocker.patch(
+            "Blackjack.game.Game.new_hand", return_value="mocked"
         )
+
         self.load_player = mocker.patch(
-            "Blackjack.game.load_player", return_value="mocked"
+            "Blackjack.main_menu.load_player", return_value="mocked"
         )
 
         yield
@@ -41,26 +43,35 @@ class TestMenu:
     def test_play_hand(self, class_setup, method_setup):
 
         self.fake_input.side_effect = ["1"]
-        Blackjack.game.main_menu()
+        Blackjack.main_menu.main_menu()
 
         assert self.fake_print.call_count == 5
         assert self.fake_input.call_count == 1
         assert self.new_hand.call_count == 1
 
-    def test_bad_input(self, class_setup, method_setup):
+    def test_bad_input(self, class_setup, method_setup, mocker):
+        new_player = mocker.patch(
+            "Blackjack.main_menu.new_player", return_value="mocked"
+        )
         self.fake_input.side_effect = ["Foo", 2]
-        Blackjack.game.main_menu()
+        Blackjack.main_menu.main_menu()
 
-        assert self.new_player.call_count == 1
+        assert new_player.call_count == 1
 
         assert self.fake_print.call_count == 10
         assert self.fake_input.call_count == 2
 
-        self.fake_print.reset_mock()
-        self.fake_input.reset_mock()
+    def test_stats_menu(self, class_setup, method_setup):
         self.load_player.return_value = player.Player("Player 1", 1000)
         self.fake_input.side_effect = ["3", "Player 1"]
-        Blackjack.game.main_menu()
+        Blackjack.main_menu.main_menu()
         assert self.fake_print.call_count == 6
         assert self.fake_input.call_count == 2
         assert self.load_player.call_count == 1
+
+    def test_new_player(self, class_setup, method_setup):
+        self.fake_input.side_effect = ["Player 1", "One Thousand", 1001]
+        new_player = Blackjack.main_menu.new_player()
+        assert self.fake_input.call_count == 3
+        assert new_player.get_name() == "Player 1"
+        assert new_player.get_bankroll() == 1001

@@ -9,4 +9,3 @@ class Move(Enum):
     HIT = 0
     STAND = 1
     DOUBLE_DOWN = 2
-    SPLIT = 3
