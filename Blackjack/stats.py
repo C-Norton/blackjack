@@ -12,12 +12,19 @@ class Stats:
             "bankroll": starting_bankroll,
             "wins": 0,
             "losses": 0,
+            "pushes": 0,
         }
 
     def get_wins(self):
         pass
 
     def get_losses(self):
+        pass
+
+    def get_pushes(self):
+        pass
+
+    def add_push(self):
         pass
 
     def get_bankroll(self):

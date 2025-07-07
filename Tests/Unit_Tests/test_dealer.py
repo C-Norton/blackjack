@@ -34,7 +34,7 @@ class TestDealer:
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
 
-    def test_blackjack(self, class_setup, method_setup, mocker):
+    def test_blackjack(self, class_setup, method_setup, generate_fake_card):
         """
         In order to test this properly, we need to inject a mock hand instance into the dealer
         Hand 1 will have a deck like the below
@@ -46,10 +46,10 @@ class TestDealer:
         "7♥"
         BOTTOM OF DECK
         """
-        fake_card1 = generate_fake_card(Suit.CLUBS, Value.ACE, mocker)
-        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN, mocker)
-        fake_card3 = generate_fake_card(Suit.DIAMONDS, Value.ACE, mocker)
-        fake_card4 = generate_fake_card(Suit.HEARTS, Value.SEVEN, mocker)
+        fake_card1 = generate_fake_card(Suit.CLUBS, Value.ACE)
+        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN)
+        fake_card3 = generate_fake_card(Suit.DIAMONDS, Value.ACE)
+        fake_card4 = generate_fake_card(Suit.HEARTS, Value.SEVEN)
 
         self.deck.append(fake_card1)
         self.deck.append(fake_card2)
@@ -77,7 +77,7 @@ class TestDealer:
         assert self.deck[0] == fake_card3
         assert move3 == Move.STAND
 
-    def test_hit_stand_logic(self, class_setup, method_setup, mocker):
+    def test_hit_stand_logic(self, class_setup, method_setup, generate_fake_card):
         """
         Hand 2 will have a deck like the below
         TOP OF DECK
@@ -94,10 +94,10 @@ class TestDealer:
                           (5) (15)(16)(23)
         """
 
-        fake_card1 = generate_fake_card(Suit.CLUBS, Value.FIVE, mocker)
-        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN, mocker)
-        fake_card3 = generate_fake_card(Suit.DIAMONDS, Value.ACE, mocker)
-        fake_card4 = generate_fake_card(Suit.HEARTS, Value.SEVEN, mocker)
+        fake_card1 = generate_fake_card(Suit.CLUBS, Value.FIVE)
+        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN)
+        fake_card3 = generate_fake_card(Suit.DIAMONDS, Value.ACE)
+        fake_card4 = generate_fake_card(Suit.HEARTS, Value.SEVEN)
 
         self.deck.append(fake_card1)
         self.deck.append(fake_card2)

@@ -22,8 +22,12 @@ class Dealer:
     def __init__(self, dealer_hand=Hand()):
         self.hand = dealer_hand
 
+    def get_hand(self):
+        return self.hand
+
     def reveal_hand(self):
-        pass
+        self.hand[-1].flip()
+        print(self.hand)
 
     def print_hand(self):
         pass
@@ -40,6 +44,9 @@ class Dealer:
             return Move.HIT
         else:
             return Move.STAND
+
+    def deal_card(self, card):
+        pass
 
     def has_busted(self):
         pass

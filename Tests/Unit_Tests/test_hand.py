@@ -27,11 +27,13 @@ class TestHand:
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
 
-    def test_ace_progression(self, class_setup, method_setup, mocker):
-        fake_card1 = generate_fake_card(Suit.CLUBS, Value.ACE, mocker)
-        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN, mocker)
-        fake_card3 = generate_fake_card(Suit.DIAMONDS, Value.ACE, mocker)
-        fake_card4 = generate_fake_card(Suit.HEARTS, Value.SEVEN, mocker)
+    def test_ace_progression(
+        self, class_setup, method_setup, mocker, generate_fake_card
+    ):
+        fake_card1 = generate_fake_card(Suit.CLUBS, Value.ACE)
+        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN)
+        fake_card3 = generate_fake_card(Suit.DIAMONDS, Value.ACE)
+        fake_card4 = generate_fake_card(Suit.HEARTS, Value.SEVEN)
         self.my_hand.add_card(fake_card1)
         assert self.my_hand.get_total() == 11
         assert self.my_hand.get_size() == 1

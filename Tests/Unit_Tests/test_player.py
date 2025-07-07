@@ -24,7 +24,7 @@ class TestPlayer:
     @pytest.fixture
     def method_setup(self, request, mocker):
         print(f"Setting up method: {request.function.__name__}")
-
+        self.fake_print = mocker.patch("builtins.print")
         self.fake_input = mocker.patch("builtins.input")
         yield
         print(f"Tearing down method: {request.function.__name__}")
@@ -37,7 +37,7 @@ class TestPlayer:
         assert type(self.player) is Player
         assert self.player.get_name() == "Player 1"
         assert self.player.get_bankroll() == 1000
-        assert type(self.player.get_stats()) is dict
+        self.fake_print.reset_mock()
         assert self.fake_input.call_count == 2
         self.fake_input.reset_mock()
 
@@ -48,5 +48,6 @@ class TestPlayer:
 
         assert self.player.get_name() == "Player 2"
         assert self.player.get_bankroll() == 2000
-        assert type(self.player.get_stats()) is dict
         assert self.fake_input.call_count == 3
+    def test_stats(self):
+
