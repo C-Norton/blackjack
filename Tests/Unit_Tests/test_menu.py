@@ -68,7 +68,6 @@ class TestMenu:
         Blackjack.main_menu.main_menu()
 
         assert self.load_player.call_count == 1
-        assert fake_player.get_stats.call_count == 1
 
     def test_new_player(self, class_setup, method_setup):
         self.fake_input.side_effect = ["Player 1", "One Thousand", 1001]

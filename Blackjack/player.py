@@ -7,20 +7,31 @@ bankroll, which represents the amount of money the player has
 and name, which reflects the player's name.
 """
 
+from pathlib import Path
+
 from .move import Move
 from .result import Result
-from .stats import Stats
+import json
 
 
 class OutOfMoneyException:
     pass
 
 
+# todo: properties for stats
 class Player:
-    def __init__(self, name, bankroll, stats=None):
+    def __init__(self, name, bankroll):
         self.name = name
         self.bankroll = bankroll
-        self.stats = stats if stats is not None else Stats(bankroll)
+        self.stats = dict(
+            {
+                "name": name,
+                "bankroll": bankroll,
+                "wins": 0,
+                "losses": 0,
+                "pushes": 0,
+            }
+        )
         self.bet = 0
         self.hand = None
 
@@ -113,6 +124,7 @@ class Player:
                 result = Move.STAND
             elif move == "double down":
                 if self.double_down():
+                    self.hand.add_card(deck.pop)
                     result = Move.DOUBLE_DOWN
                 else:
                     print("You don't have enough money to double down.")
@@ -123,3 +135,17 @@ class Player:
 
     def get_hand(self):
         return self.hand
+
+
+def load_player(path):
+
+    with open(path, "r") as file:
+        return json.load(file)
+
+
+def save_player(
+    player: Player,
+    path,
+):
+    with open(path, "w") as file:
+        json.dump(player.stats, file)

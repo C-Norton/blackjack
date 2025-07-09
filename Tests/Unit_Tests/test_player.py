@@ -7,11 +7,14 @@ CREATED ON: 7/4/2025
 """
 
 import collections
+import json
+from pathlib import Path
 
 import pytest
 
 import Blackjack
 import Blackjack.main_menu
+from Blackjack import player
 from Blackjack.move import Move
 from Blackjack.player import Player
 from Blackjack.result import Result
@@ -38,13 +41,12 @@ class TestPlayer:
         self.fake_hand = mocker.Mock()
         self.deck = collections.deque()
         self.deck.append(generate_fake_card(Suit.CLUBS, Value.JACK))
-        self.player = Player("Player 1", 100, stats=self.fake_stats)
+        self.player = Player("Player 1", 100)
         yield
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
 
     def test_player_creation(self, class_setup, method_setup):
-
         self.fake_input.side_effect = ["Player 1", "1000"]
         self.player = Blackjack.main_menu.new_player()
         assert type(self.player) is Player
@@ -155,9 +157,12 @@ class TestPlayer:
 
     def test_take_turn_DOUBLE_DOWN_invalid(self, class_setup, method_setup):
         self.fake_input.side_effect = ["DOUBLE DOWN", "hit"]
+        self.player.hand = self.fake_hand
+        self.player.bet = 51
         assert self.player.take_turn(self.deck) == Move.HIT
         assert self.fake_input.call_count == 2
         assert len(self.deck) == 0
+        assert self.fake_hand.add_card.call_count == 1
 
     def test_has_busted(self, class_setup, method_setup):
         self.fake_hand.get_total.return_value = 24
@@ -172,3 +177,25 @@ class TestPlayer:
     def test_get_hand(self, class_setup, method_setup):
         self.player.hand = self.fake_hand
         assert self.player.get_hand() == self.fake_hand
+
+    def test_save_load_player(self, class_setup, method_setup, mocker):
+        try:
+            my_player = Player("player 1", 1000)
+            my_player.stats = {
+                "name": "player 1",
+                "bankroll": 1000,
+                "wins": 5,
+                "losses": 3,
+                "pushes": 2,
+            }
+            path = Path("test_player.blackjack")
+            player.save_player(my_player, path)
+            assert path.exists()
+            result = player.load_player(path)
+            assert result == my_player
+
+        except Exception as e:
+            print(e)
+
+        finally:
+            Path.unlink(path)

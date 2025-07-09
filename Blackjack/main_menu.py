@@ -2,6 +2,7 @@
 
 from Blackjack.game import Game
 from Blackjack.player import Player
+from Blackjack.player import load_player, save_player
 
 
 def main_menu():
@@ -32,15 +33,11 @@ def main_menu():
             print("Showing stats")
             name = input("What player would you like to see stats for? ")
             player = load_player(name)
-            print(player.get_stats())
+            print(player.stats)
 
         case default:
             print("Please enter a value between 1 and 3. Exiting")
             return
-
-
-def load_player(playername):
-    return Player()
 
 
 def new_player():
@@ -52,4 +49,10 @@ def new_player():
             bankroll = int(input("Please enter starting bankroll: "))
         except ValueError:
             print("Invalid bankroll; please enter an integer")
-    return Player(name, bankroll)
+    player = Player(name, bankroll)
+    save_player(player)
+    return player
+
+
+if __name__ == "__main__":
+    main_menu()
