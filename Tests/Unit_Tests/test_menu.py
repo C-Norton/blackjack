@@ -10,8 +10,6 @@ import pytest
 
 import Blackjack
 import Blackjack.main_menu
-from Blackjack import player
-from Blackjack import game
 
 
 class TestMenu:
@@ -41,7 +39,6 @@ class TestMenu:
         # TODO: Add your teardown code here
 
     def test_play_hand(self, class_setup, method_setup):
-
         self.fake_input.side_effect = ["1"]
         Blackjack.main_menu.main_menu()
 

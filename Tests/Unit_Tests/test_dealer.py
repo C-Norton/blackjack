@@ -7,12 +7,13 @@ CREATED ON: 7/4/2025
 """
 
 import collections
+
 import pytest
+
 from Blackjack import dealer
 from Blackjack.move import Move
 from Blackjack.suit import Suit
 from Blackjack.value import Value
-from Tests.Util.test_helpers import generate_fake_card
 
 
 class TestDealer:

@@ -5,7 +5,6 @@ from .value import Value
 
 
 class Hand:
-
     def __init__(self):
         self.cards = collections.deque()
 

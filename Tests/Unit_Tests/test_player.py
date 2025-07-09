@@ -7,7 +7,6 @@ CREATED ON: 7/4/2025
 """
 
 import collections
-import json
 from pathlib import Path
 
 import pytest
@@ -20,7 +19,6 @@ from Blackjack.player import Player
 from Blackjack.result import Result
 from Blackjack.suit import Suit
 from Blackjack.value import Value
-from Tests.Util.test_helpers import generate_fake_card
 
 
 class TestPlayer:
@@ -33,7 +31,7 @@ class TestPlayer:
         # TODO: Add your teardown code here
 
     @pytest.fixture
-    def method_setup(self, request, generate_fake_card, mocker):
+    def method_setup(self, request, mocker, generate_fake_card):
         print(f"Setting up method: {request.function.__name__}")
         self.fake_print = mocker.patch("builtins.print")
         self.fake_input = mocker.patch("builtins.input")

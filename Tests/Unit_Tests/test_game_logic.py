@@ -11,12 +11,11 @@ import collections
 import pytest
 
 import Blackjack
-from Blackjack import card, game
+from Blackjack import card
 from Blackjack.move import Move
 from Blackjack.result import Result
 from Blackjack.suit import Suit
 from Blackjack.value import Value
-from Tests.Util.test_helpers import generate_fake_card
 
 
 class TestGameLogic:

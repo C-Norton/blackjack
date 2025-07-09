@@ -7,6 +7,7 @@ CREATED ON: 7/4/2025
 """
 
 import pytest
+
 from Blackjack import card
 from Blackjack.suit import Suit
 from Blackjack.value import Value
@@ -57,10 +58,10 @@ class TestCard:
         assert card3.__str__() == "K♦"
         assert card4.__str__() == "A♥"
 
-        card1.flip()
-        assert card1.is_facedown() == True
+        card1.face_down = True
+        assert card1.face_down
         assert card1.__str__() == "##"
         assert str(card1) == "##"
-        card1.flip()
+        card1.face_down = False
         assert card1.__str__() == "7♠"
         assert str(card1) == "7♠"

@@ -1,8 +1,7 @@
 """"""
 
 from Blackjack.game import Game
-from Blackjack.player import Player
-from Blackjack.player import load_player, save_player
+from Blackjack.player import Player, load_player, save_player
 
 
 def main_menu():
@@ -35,7 +34,7 @@ def main_menu():
             player = load_player(name)
             print(player.stats)
 
-        case default:
+        case _:
             print("Please enter a value between 1 and 3. Exiting")
             return
 

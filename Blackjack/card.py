@@ -3,7 +3,6 @@ from .value import Value
 
 
 class Card:
-
     def __init__(self, suit: Suit, value: Value):
         """
         __init__ is a method that creates an instance of a class; in this case a card. It's double underscord (dunder) name
@@ -35,6 +34,10 @@ class Card:
         self._face_down = value
 
     def __str__(self):
+        """
+        __str__ is a method that returns a string representation of the card
+        :return:
+        """
         if not self._face_down:
             return self.value.display + str(self.suit)
         else:

@@ -24,7 +24,6 @@ def generate_deck():
 
 
 class Game:
-
     def __init__(self):
         self.can_player_move = True
 
