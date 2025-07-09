@@ -7,8 +7,13 @@ bankroll, which represents the amount of money the player has
 and name, which reflects the player's name.
 """
 
+from .move import Move
 from .result import Result
 from .stats import Stats
+
+
+class OutOfMoneyException:
+    pass
 
 
 class Player:
@@ -26,44 +31,95 @@ class Player:
         pass
 
     def get_stats(self):
-        print(f"============== Stats for {self.name} ==============")
-        print("Total Money: " + self.stats.get_bankroll())
-        print("Total Wins: " + self.stats.get_wins())
-        print("Total Losses: " + self.stats.get_losses())
+        return self.stats
 
     def get_bankroll(self):
         return self.bankroll
 
     def update_bankroll(self, net_change):
-        self.bankroll += net_change
+        if net_change >= 0:
+            self.bankroll += net_change
+            self.stats.adjust_bankroll(net_change)
+            return True
+        elif net_change < 0 and -1 * net_change <= self.bankroll:
+            self.bankroll += net_change
+            self.stats.adjust_bankroll(net_change)
+            return True
+        else:
+            print(
+                f"Error, cannot adjust bankroll by{net_change} as bankroll is equal to {self.bankroll}"
+            )
+            return False
 
     def update_stats(self, result_tuple):
-        if result_tuple(0) == Result.VICTORY:
-            self.stats.add_win()
-            self.stats.adjust_bankroll(result_tuple(1))
-        elif result_tuple(0) == Result.PUSH:
+        if result_tuple[0] == Result.VICTORY:
+            if result_tuple[1] > 0:
+                self.stats.add_win()
+                self.stats.adjust_bankroll(result_tuple[1])
+                return True
+            else:
+                return False
+        elif result_tuple[0] == Result.PUSH:
             self.stats.add_push()
+            return True
         else:
-            self.stats.add_loss()
-            self.stats.adjust_bankroll(-result_tuple(1))
+            if 0 > result_tuple[1] >= -self.bankroll:
+                self.stats.add_loss()
+                self.stats.adjust_bankroll(result_tuple[1])
+                return True
+            else:
+                return False
 
     def ante(self):
-        pass
+        if self.bankroll == 0:
+            # This behavior is not defined by tests. We will leave this edge case alone, as we don't want to be too
+            # picky for the students
+            print("You're broke! Please add more money to your bankroll!")
+            raise OutOfMoneyException
+        bet = None
+        while not bet:
+            try:
+                print(f"Ante up! Your current bankroll is {self.bankroll}.")
+                bet = int(
+                    input(f"Please enter a number between 1 and {self.bankroll}:\t")
+                )
+                if bet > self.bankroll:
+                    bet = None
+            except:
+                print("Please enter an integer!")
+        self.bet = bet
 
     def get_bet(self):
         return self.bet
 
     def double_down(self):
-        pass
-
-    def can_double_down(self):
-        pass
+        if self.bet <= self.bankroll / 2:
+            self.bet *= 2
+            return True
+        else:
+            return False
 
     def take_turn(self, deck):
-        pass
+        print("Please take your turn")
+        result = None
+        while not result:
+            move = input("Enter 'Hit', 'Stand' or 'Double Down': ")
+            move = move.strip()
+            move = move.lower()
+            if move == "hit":
+                self.hand.add_card(deck.pop())
+                result = Move.HIT
+            elif move == "stand":
+                result = Move.STAND
+            elif move == "double down":
+                if self.double_down():
+                    result = Move.DOUBLE_DOWN
+                else:
+                    print("You don't have enough money to double down.")
+        return result
 
     def has_busted(self):
-        pass
+        return self.hand.get_total() > 21
 
     def get_hand(self):
-        return None
+        return self.hand
