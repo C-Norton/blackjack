@@ -40,3 +40,6 @@ class Hand:
         for card in self.cards:
             output += str(card) + "\n"
         return output.strip("\n")
+
+    def __getitem__(self, index):
+        return self.cards[index]

@@ -53,9 +53,9 @@ class TestGameLogic:
         self.fake_player_hand.get_total.return_value = 22
         self.fake_player.take_turn.return_value = Move.HIT
         self.fake_player.get_hand.return_value = self.fake_player_hand
-        assert self.game.can_player_move
+        assert self.game._can_player_move
         assert not self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
-        assert not self.game.can_player_move
+        assert not self.game._can_player_move
 
     def test_play_round_hit(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
@@ -63,9 +63,9 @@ class TestGameLogic:
         self.fake_player.get_hand.return_value = self.fake_player_hand
         self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 17
-        assert self.game.can_player_move
+        assert self.game._can_player_move
         assert self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
-        assert self.game.can_player_move
+        assert self.game._can_player_move
 
     def test_play_round_stand(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
@@ -73,9 +73,9 @@ class TestGameLogic:
         self.fake_player.get_hand.return_value = self.fake_player_hand
         self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 17
-        assert self.game.can_player_move
+        assert self.game._can_player_move
         assert self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
-        assert not self.game.can_player_move
+        assert not self.game._can_player_move
 
     def test_play_round_dealer_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
@@ -83,9 +83,9 @@ class TestGameLogic:
         self.fake_player.get_hand.return_value = self.fake_player_hand
         self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 22
-        assert self.game.can_player_move
+        assert self.game._can_player_move
         assert not self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
-        assert self.game.can_player_move
+        assert self.game._can_player_move
 
     def test_play_round_double_down(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 16
@@ -93,9 +93,9 @@ class TestGameLogic:
         self.fake_player.get_hand.return_value = self.fake_player_hand
         self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 22
-        assert self.game.can_player_move
+        assert self.game._can_player_move
         assert not self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
-        assert not self.game.can_player_move
+        assert not self.game._can_player_move
 
     def test_deal(self, class_setup, method_setup, generate_fake_card, mocker):
         deck = collections.deque()
@@ -109,10 +109,10 @@ class TestGameLogic:
         deck.append(fake_card_4)
         fake_player = mocker.Mock()
         fake_dealer = mocker.Mock()
-        self.game.deal(fake_player, deck, fake_dealer)
+        self.game.deal(fake_player, fake_dealer, deck)
         assert fake_player.deal_card.call_count == 2
         assert fake_dealer.deal_card.call_count == 2
-        assert self.game.can_player_move
+        assert self.game._can_player_move
 
     def test_game_logic_invalid_inputs(self, class_setup, method_setup):
         """

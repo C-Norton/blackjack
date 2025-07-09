@@ -4,16 +4,22 @@ Game handles the flow of play
 
 import collections
 import random
+from typing import Optional
 
-from . import dealer
 from .card import Card
+from .dealer import Dealer
 from .move import Move
+from .player import Player
 from .result import Result
 from .suit import Suit
 from .value import Value
 
 
-def generate_deck():
+def generate_deck()->collections.deque:
+    """
+    generate deck generates a deck of 52 card objects, adds them to a deque, and shuffles them
+    :return: the generated deque object
+    """
     deck = collections.deque()
     for suit in Suit:
         for value in Value:
@@ -24,33 +30,60 @@ def generate_deck():
 
 
 class Game:
-    def __init__(self):
-        self.can_player_move = True
+    """
+    Game handles the flow of play, including generating new hands and all the helper methods therein
+    """
+    def __init__(self, player:Player, dealer:Optional[Dealer]=None, deck:Optional[collections.deque]=None):
+        """
+        __init__ creates a new Game instance, and sets up the class for play.
 
-    def deal(self, player, deck, dealer):
-        self.can_player_move = True
-        player.ante()
-        player.deal_card(deck)
-        dealer.deal_card(deck)
-        player.deal_card(deck)
-        dealer.deal_card(deck)
+        :param player: the player object that will play in the game
+        :param dealer: the dealer object that will play in the game
+        """
+        if dealer is None:
+            dealer = Dealer()
+        if deck is None:
+            deck = generate_deck()
+        self.deck = deck
+        self.dealer = dealer
+        self.player = player
+        self._can_player_move = True
 
-    def play_round(self, player, deck, dealer):
-        """play round returns a boolean as to if there should be another round"""
-        if self.can_player_move:
-            player_turn = player.take_turn(deck)
-            if player.get_hand().get_total() > 21:
-                self.can_player_move = False
+
+
+    def deal(self)->None:
+        """
+        deal prepares the hand for play by dealing 2 cards to the player and 2 to dealer, alternating who gets what card
+        it also requests an ante (initial bet) from the player
+        :return: None
+        """
+        self._can_player_move = True
+        self.player.ante()
+        self.player.deal_card(self.deck)
+        self.dealer.deal_card(self.deck)
+        self.player.deal_card(self.deck)
+        self.dealer.deal_card(self.deck)
+
+    def play_round(self)->bool:
+        """
+        play round returns a boolean as to if there should be another round
+        :return: boolean, true if another round is warranted
+        """
+        if self._can_player_move:
+            player_turn = self.player.take_turn(self.deck)
+            if self.player.hand.get_total() > 21:
+                self._can_player_move = False
                 return False
 
             if player_turn == Move.STAND:
-                self.can_player_move = False
+                self._can_player_move = False
 
             if player_turn == Move.DOUBLE_DOWN:
-                self.can_player_move = False
-
-        dealer_turn = dealer.take_turn(deck)
-        if dealer.get_hand().get_total() > 21:
+                self._can_player_move = False
+        else:
+            player_turn = Move.STAND
+        dealer_turn = self.dealer.take_turn(self.deck)
+        if self.dealer.hand.get_total() > 21:
             return False
         if (
             player_turn == Move.STAND or player_turn == Move.DOUBLE_DOWN
@@ -58,7 +91,7 @@ class Game:
             return False
         return True
 
-    def new_hand(self, player, deck=generate_deck(), dealer=dealer.Dealer()):
+    def new_hand(self)->Result:
         """
         Deals a new hand, plays the game, and returns a tuple of a result and the net change to bankroll
         Order of operations:
@@ -74,18 +107,17 @@ class Game:
             Save stats
         :return:
         """
+        self.deal()
 
-        self.deal(player, deck, dealer)
-
-        while self.play_round(player, deck, dealer):
+        while self.play_round():
             # play round completes via side effects, therefore this loop condition is all we need
             pass
 
-        dealer.reveal_hand()
+        self.dealer.reveal_hand()
 
-        return self.evaluate(player.get_hand(), dealer.get_hand())
+        return self.evaluate()
 
-    def evaluate(self, player_hand, dealer_hand):
+    def evaluate(self)->Result:
         """
         Blackjack scoring:
         In order of priority
@@ -94,11 +126,10 @@ class Game:
             If both players have 21, any natural 21 (no hits) wins
             If a tie, the result is a push
             Higher card wins
-        :param player_hand:
-        :param dealer_hand:
-        :return:
+        :return: a Result enum reflecting the result of the hand
         """
-
+        player_hand = self.player.hand
+        dealer_hand = self.dealer.hand
         if player_hand.get_total() > 21:
             return Result.DEFEAT
         elif dealer_hand.get_total() > 21:
