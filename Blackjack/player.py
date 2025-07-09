@@ -7,11 +7,11 @@ bankroll, which represents the amount of money the player has
 and name, which reflects the player's name.
 """
 
-from pathlib import Path
+
+import json
 
 from .move import Move
 from .result import Result
-import json
 
 
 class OutOfMoneyException:
@@ -96,7 +96,7 @@ class Player:
                 )
                 if bet > self.bankroll:
                     bet = None
-            except:
+            except Exception:
                 print("Please enter an integer!")
         self.bet = bet
 
@@ -138,7 +138,6 @@ class Player:
 
 
 def load_player(path):
-
     with open(path, "r") as file:
         return json.load(file)
 

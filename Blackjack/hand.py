@@ -5,12 +5,18 @@ from .value import Value
 
 
 class Hand:
-
     def __init__(self):
+        """
+        __init__ creates a new hand
+        """
         self.cards = collections.deque()
 
-    def add_card(self, my_card: Card):
-        self.cards.appendleft(my_card)
+    def add_card(self, card: Card)->None:
+        """
+        :param card: the card to add to the collection
+        :return:
+        """
+        self.cards.appendleft(card)
 
     def get_size(self):
         return len(self.cards)
@@ -41,3 +47,6 @@ class Hand:
         for card in self.cards:
             output += str(card) + "\n"
         return output.strip("\n")
+
+    def __getitem__(self, index):
+        return self.cards[index]

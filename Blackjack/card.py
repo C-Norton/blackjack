@@ -3,37 +3,42 @@ from .value import Value
 
 
 class Card:
-    """
-    __init__ is a method that creates an instance of a class; in this case a card. It's double underscord (dunder) name
-    It takes in two external parameters, suit and value is reserved, no other method may use this name, it always
-    creates and returns a fresh instance
-
-    Suit and Value are both enum parameters that confer the card's identity, such as the ace of spades.
-    """
     def __init__(self, suit: Suit, value: Value):
-        self.Suit = suit
-        self.Value = value
-        self.FaceDown = False
-    """
-    is_facedown determines if the card is face-down on the table, which changes it's __str__ method. this should only
-    ever be the first card dealt to the dealer's hand.
-    """
-    def is_facedown(self):
-        return self.FaceDown
-    """
-    Flip simply inverts the card facedown value. It's a setter method
-    """
-    def flip(self):
-        self.FaceDown = not self.FaceDown
+        """
+        __init__ is a method that creates an instance of a class; in this case a card. It's double underscord (dunder) name
+        It takes in two external parameters, suit and value is reserved, no other method may use this name, it always
+        creates and returns a fresh instance
 
-    def get_value(self):
-        return self.Value
+        :param suit: An enum parameter representing the suit of the card
+        :param value: An enum parameter representing the value of the card
+        """
+        self.suit: Suit = suit
+        self.value: Value = value
+        self._face_down: bool = False
 
-    def get_suit(self):
-        return self.Suit
+    @property
+    def face_down(self):
+        """
+        this is a property method that returns True if the card face down
+        :return:
+        """
+        return self._face_down
+
+    @face_down.setter
+    def face_down(self, value):
+        """
+        this is a property method that sets the value of the face down variable
+        :param value:
+        :return:
+        """
+        self._face_down = value
 
     def __str__(self):
-        if not self.FaceDown:
-            return self.Value.display + str(self.Suit)
+        """
+        __str__ is a method that returns a string representation of the card
+        :return:
+        """
+        if not self._face_down:
+            return self.value.display + str(self.suit)
         else:
             return "##"

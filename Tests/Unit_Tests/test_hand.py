@@ -5,7 +5,7 @@ Test for: hand.py
 """
 
 import pytest
-from Tests.Util.test_helpers import generate_fake_card
+
 from Blackjack import hand
 from Blackjack.suit import Suit
 from Blackjack.value import Value
