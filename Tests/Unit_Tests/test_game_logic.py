@@ -11,7 +11,7 @@ import collections
 import pytest
 
 import Blackjack
-from Blackjack import card
+from Blackjack import card, game
 from Blackjack.move import Move
 from Blackjack.result import Result
 from Blackjack.suit import Suit
@@ -37,14 +37,14 @@ class TestGameLogic:
         self.fake_dealer_hand = mocker.Mock()
         self.fake_player_hand = mocker.Mock()
         self.fake_dealer = mocker.Mock()
-        self.game = Blackjack.game.Game()
+        self.game = Blackjack.game.Game(self.fake_player,self.fake_dealer,self.deck)
         yield
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
 
     def test_generate_deck(self, class_setup, method_setup):
         # Generate deck
-        deck = Blackjack.game.generate_deck()
+        deck = game.generate_deck()
         assert type(deck) is collections.deque
         assert len(deck) == 52
         assert type(deck.popleft()) is card.Card

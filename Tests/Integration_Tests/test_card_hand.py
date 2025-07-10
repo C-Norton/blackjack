@@ -8,7 +8,7 @@ CREATED ON: 7/4/2025
 
 import pytest
 
-from Blackjack import hand, card
+from Blackjack import card, hand
 from Blackjack.suit import Suit
 from Blackjack.value import Value
 
@@ -33,7 +33,7 @@ class Testtest_card_hand:
     def test_hand_flip_str(self, class_setup, method_setup):
         card1 = card.Card(Suit.SPADES, Value.SEVEN)
         card2 = card.Card(Suit.CLUBS, Value.TEN)
-        card1.flip()
+        card1.face_down = True
         self.my_hand.add_card(card1)
         self.my_hand.add_card(card2)
         assert str(self.my_hand) == "10♣\n##"

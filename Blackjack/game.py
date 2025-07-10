@@ -8,6 +8,7 @@ from typing import Optional
 
 from .card import Card
 from .dealer import Dealer
+from .hand import Hand
 from .move import Move
 from .player import Player
 from .result import Result
@@ -20,7 +21,7 @@ def generate_deck()->collections.deque:
     generate deck generates a deck of 52 card objects, adds them to a deque, and shuffles them
     :return: the generated deque object
     """
-    deck = collections.deque()
+    deck :collections.deque[Card] = collections.deque()
     for suit in Suit:
         for value in Value:
             card = Card(suit, value)
@@ -59,6 +60,8 @@ class Game:
         """
         self._can_player_move = True
         self.player.ante()
+        self.dealer.hand = Hand()
+        self.player.hand = Hand()
         self.player.deal_card(self.deck)
         self.dealer.deal_card(self.deck)
         self.player.deal_card(self.deck)
@@ -69,6 +72,10 @@ class Game:
         play round returns a boolean as to if there should be another round
         :return: boolean, true if another round is warranted
         """
+        print("Dealer's Hand")
+        print(str(self.dealer.hand))
+        print(f"{self.player.name}'s Hand")
+        print(str(self.player.hand))
         if self._can_player_move:
             player_turn = self.player.take_turn(self.deck)
             if self.player.hand.get_total() > 21:

@@ -6,10 +6,11 @@ player has 2 fields initialized by the constructor,
 bankroll, which represents the amount of money the player has
 and name, which reflects the player's name.
 """
-
-
+import collections
 import json
+from typing import Optional
 
+from .hand import Hand
 from .move import Move
 from .result import Result
 
@@ -18,12 +19,18 @@ class OutOfMoneyException:
     pass
 
 
-# todo: properties for stats
 class Player:
-    def __init__(self, name, bankroll):
-        self.name = name
-        self.bankroll = bankroll
-        self.stats = dict(
+
+    def __init__(self, stats:dict):
+        self.name:str = stats["name"]
+        self.bankroll:int = stats["bankroll"]
+        self.stats:dict = stats
+        self.bet:int = 0
+        self.hand:Optional[Hand] = None
+
+    @classmethod
+    def from_name_bankroll(cls, name:str, bankroll:int):
+       return Player(
             {
                 "name": name,
                 "bankroll": bankroll,
@@ -32,8 +39,6 @@ class Player:
                 "pushes": 0,
             }
         )
-        self.bet = 0
-        self.hand = None
 
     def get_name(self):
         return self.name
@@ -110,7 +115,7 @@ class Player:
         else:
             return False
 
-    def take_turn(self, deck):
+    def take_turn(self, deck:collections.deque):
         print("Please take your turn")
         result = None
         while not result:
@@ -124,7 +129,7 @@ class Player:
                 result = Move.STAND
             elif move == "double down":
                 if self.double_down():
-                    self.hand.add_card(deck.pop)
+                    self.hand.add_card(deck.pop())
                     result = Move.DOUBLE_DOWN
                 else:
                     print("You don't have enough money to double down.")
@@ -137,10 +142,10 @@ class Player:
         return self.hand
 
 
-def load_player(path):
+def load_player(path) ->Player:
     with open(path, "r") as file:
-        return json.load(file)
-
+        stats =  json.load(file)
+    return Player(stats)
 
 def save_player(
     player: Player,

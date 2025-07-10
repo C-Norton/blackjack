@@ -39,7 +39,7 @@ class TestPlayer:
         self.fake_hand = mocker.Mock()
         self.deck = collections.deque()
         self.deck.append(generate_fake_card(Suit.CLUBS, Value.JACK))
-        self.player = Player("Player 1", 100)
+        self.player = Player.from_name_bankroll("Player 1", 100)
         yield
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
