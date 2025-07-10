@@ -11,17 +11,27 @@ class Hand:
         """
         self.cards = collections.deque()
 
-    def add_card(self, card: Card)->None:
+    def add_card(self, card: Card) -> None:
         """
         :param card: the card to add to the collection
         :return:
         """
         self.cards.appendleft(card)
 
-    def get_size(self):
+    def get_size(self) -> int:
+        """
+        :return:returns the size of the cards collection
+        """
         return len(self.cards)
 
-    def get_total(self):
+    def get_total(self) -> int:
+        """
+        Get total calculates the point value of the hand as follows
+        Numbered cards: The value of their number
+        Face cards (jack king queen): Ten
+        Aces: 11, unless 11 would cause you to bust, in which case 1.
+        :return: the point value of the hand
+        """
         total = 0
         aces = 0
 
@@ -32,11 +42,17 @@ class Hand:
             else:
                 aces += 1
 
-        total = self.handle_aces(total, aces)
+        total = self._handle_aces(total, aces)
 
         return total
 
-    def handle_aces(self, subtotal: int, aces: int) -> int:
+    def _handle_aces(self, subtotal: int, aces: int) -> int:
+        """
+        Handles the point value of
+        :param subtotal:
+        :param aces:
+        :return:
+        """
         if aces + subtotal <= 11 and aces > 0:
             return subtotal + 10 + aces
         else:
