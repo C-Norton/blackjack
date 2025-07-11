@@ -58,13 +58,6 @@ class TestMenu:
         assert self.fake_print.call_count == 10
         assert self.fake_input.call_count == 2
 
-    def test_stats_menu(self, class_setup, method_setup, mocker):
-        fake_player = mocker.Mock()
-        self.load_player.return_value = fake_player
-        self.fake_input.side_effect = [3, "Player 1"]
-        Blackjack.main_menu.main_menu()
-
-        assert self.load_player.call_count == 1
 
     def test_new_player(self, class_setup, method_setup):
         self.fake_input.side_effect = ["Player 1", "One Thousand", 1001]

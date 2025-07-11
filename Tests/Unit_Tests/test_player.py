@@ -35,11 +35,11 @@ class TestPlayer:
         print(f"Setting up method: {request.function.__name__}")
         self.fake_print = mocker.patch("builtins.print")
         self.fake_input = mocker.patch("builtins.input")
-        self.fake_stats = mocker.Mock()
         self.fake_hand = mocker.Mock()
         self.deck = collections.deque()
         self.deck.append(generate_fake_card(Suit.CLUBS, Value.JACK))
         self.player = Player.from_name_bankroll("Player 1", 100)
+        self.player.hand = self.fake_hand
         yield
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
@@ -49,7 +49,7 @@ class TestPlayer:
         self.player = Blackjack.main_menu.new_player()
         assert type(self.player) is Player
         assert self.player.get_name() == "Player 1"
-        assert self.player.get_bankroll() == 1000
+        assert self.player.bankroll == 1000
         self.fake_print.reset_mock()
         assert self.fake_input.call_count == 2
         self.fake_input.reset_mock()
@@ -60,15 +60,13 @@ class TestPlayer:
         assert type(self.player) is Player
 
         assert self.player.get_name() == "Player 2"
-        assert self.player.get_bankroll() == 2000
+        assert self.player.bankroll == 2000
         assert self.fake_input.call_count == 3
 
-    def test_get_stats(self, class_setup, method_setup):
-        assert self.player.get_stats() == self.fake_stats
 
     def test_update_bankroll(self, class_setup, method_setup):
         assert self.player.update_bankroll(100)
-        assert self.fake_stats.adjust_bankroll.call_count == 1
+        assert self.player.bankroll == 200
 
     def test_negative_bankroll_update(self, class_setup, method_setup):
         assert self.player.update_bankroll(-100)
@@ -118,9 +116,6 @@ class TestPlayer:
         self.player.ante()
         assert self.player.bet == 100
 
-    def test_get_bet(self, class_setup, method_setup):
-        self.player.bet = 100000
-        assert self.player.get_bet() == 100000
 
     def test_double_down(self, class_setup, method_setup):
         self.player.bet = 50

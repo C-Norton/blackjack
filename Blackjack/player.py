@@ -17,7 +17,7 @@ from .result import Result
 
 
 class OutOfMoneyException:
-    pass
+    print("The house always wins!")
 
 
 class Player:
@@ -46,13 +46,8 @@ class Player:
     def deal_card(self, card):
         self.hand.add_card(card)
 
-    def get_stats(self):
-        return self.stats
 
-    def get_bankroll(self):
-        return self.bankroll
-
-    def update_bankroll(self, net_change):
+    def update_bankroll(self, net_change)->bool:
         if net_change >= 0:
             self.bankroll += net_change
             self.stats.update({"bankroll": self.bankroll})
@@ -67,20 +62,20 @@ class Player:
             )
             return False
 
-    def update_stats(self, result_tuple):
+    def update_stats(self, result_tuple) ->bool:
         if result_tuple[0] == Result.VICTORY:
             if result_tuple[1] > 0:
-                self.stats.add_win()
+                self.stats.update({"wins": self.stats.get("wins")+1})
                 self.stats.adjust_bankroll(result_tuple[1])
                 return True
             else:
                 return False
         elif result_tuple[0] == Result.PUSH:
-            self.stats.add_push()
+            self.stats.update({"pushes": self.stats.get("pushes")+1})
             return True
         else:
             if 0 > result_tuple[1] >= -self.bankroll:
-                self.stats.add_loss()
+                self.stats.update({"losses": self.stats.get("losses")+1})
                 self.stats.adjust_bankroll(result_tuple[1])
                 return True
             else:
@@ -135,6 +130,8 @@ class Player:
     def has_busted(self):
         return self.hand.get_total() > 21
 
+    def __eq__(self, other):
+        return self.stats == other.stats
 
 def load_player(path) -> Player:
     with open(path, "r") as file:
