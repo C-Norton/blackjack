@@ -60,8 +60,10 @@ class Game:
         """
         self._can_player_move = True
         self.player.ante()
-        self.dealer.hand = Hand()
-        self.player.hand = Hand()
+        if self.player.hand is None:
+            self.player.hand = Hand()
+        if self.dealer.hand is None:
+            self.dealer.hand = Hand()
         self.player.deal_card(self.deck)
         self.dealer.deal_card(self.deck)
         self.player.deal_card(self.deck)

@@ -49,7 +49,7 @@ def main_menu():
 def new_player():
     """
     new_player creates a new player. It handles the menu operations
-    :return:
+    :return: the new player object
     """
     print("======= New Player =======")
     name = input("Please enter player name: ")

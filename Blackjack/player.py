@@ -44,7 +44,7 @@ class Player:
         return self.name
 
     def deal_card(self, card):
-        pass
+        self.hand.add_card(card)
 
     def get_stats(self):
         return self.stats
@@ -55,11 +55,11 @@ class Player:
     def update_bankroll(self, net_change):
         if net_change >= 0:
             self.bankroll += net_change
-            self.stats.adjust_bankroll(net_change)
+            self.stats.update({"bankroll":self.bankroll})
             return True
         elif net_change < 0 and -1 * net_change <= self.bankroll:
             self.bankroll += net_change
-            self.stats.adjust_bankroll(net_change)
+            self.stats.update({"bankroll":self.bankroll})
             return True
         else:
             print(
@@ -86,7 +86,7 @@ class Player:
             else:
                 return False
 
-    def ante(self):
+    def ante(self)->int:
         if self.bankroll == 0:
             # This behavior is not defined by tests. We will leave this edge case alone, as we don't want to be too
             # picky for the students
@@ -105,17 +105,15 @@ class Player:
                 print("Please enter an integer!")
         self.bet = bet
 
-    def get_bet(self):
-        return self.bet
 
-    def double_down(self):
+    def double_down(self)-> bool:
         if self.bet <= self.bankroll / 2:
             self.bet *= 2
             return True
         else:
             return False
 
-    def take_turn(self, deck:collections.deque):
+    def take_turn(self, deck:collections.deque)->Move:
         print("Please take your turn")
         result = None
         while not result:
@@ -138,8 +136,7 @@ class Player:
     def has_busted(self):
         return self.hand.get_total() > 21
 
-    def get_hand(self):
-        return self.hand
+
 
 
 def load_player(path) ->Player:

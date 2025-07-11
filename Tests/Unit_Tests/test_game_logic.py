@@ -52,49 +52,49 @@ class TestGameLogic:
     def test_play_round_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 22
         self.fake_player.take_turn.return_value = Move.HIT
-        self.fake_player.get_hand.return_value = self.fake_player_hand
+        self.fake_player.hand = self.fake_player_hand
         assert self.game._can_player_move
-        assert not self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
+        assert not self.game.play_round()
         assert not self.game._can_player_move
 
     def test_play_round_hit(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
         self.fake_player.take_turn.return_value = Move.HIT
-        self.fake_player.get_hand.return_value = self.fake_player_hand
-        self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
+        self.fake_player.hand = self.fake_player_hand
+        self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 17
         assert self.game._can_player_move
-        assert self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
+        assert self.game.play_round()
         assert self.game._can_player_move
 
     def test_play_round_stand(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
         self.fake_player.take_turn.return_value = Move.STAND
-        self.fake_player.get_hand.return_value = self.fake_player_hand
-        self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
+        self.fake_player.hand = self.fake_player_hand
+        self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 17
         assert self.game._can_player_move
-        assert self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
+        assert self.game.play_round()
         assert not self.game._can_player_move
 
     def test_play_round_dealer_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
         self.fake_player.take_turn.return_value = Move.HIT
-        self.fake_player.get_hand.return_value = self.fake_player_hand
-        self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
+        self.fake_player.hand = self.fake_player_hand
+        self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 22
         assert self.game._can_player_move
-        assert not self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
+        assert not self.game.play_round()
         assert self.game._can_player_move
 
     def test_play_round_double_down(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 16
         self.fake_player.take_turn.return_value = Move.DOUBLE_DOWN
-        self.fake_player.get_hand.return_value = self.fake_player_hand
-        self.fake_dealer.get_hand.return_value = self.fake_dealer_hand
+        self.fake_player.hand = self.fake_player_hand
+        self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 22
         assert self.game._can_player_move
-        assert not self.game.play_round(self.fake_player, self.deck, self.fake_dealer)
+        assert not self.game.play_round()
         assert not self.game._can_player_move
 
     def test_deal(self, class_setup, method_setup, generate_fake_card, mocker):
@@ -107,11 +107,10 @@ class TestGameLogic:
         deck.append(fake_card_2)
         deck.append(fake_card_3)
         deck.append(fake_card_4)
-        fake_player = mocker.Mock()
-        fake_dealer = mocker.Mock()
-        self.game.deal(fake_player, fake_dealer, deck)
-        assert fake_player.deal_card.call_count == 2
-        assert fake_dealer.deal_card.call_count == 2
+
+        self.game.deal()
+        assert self.fake_player.deal_card.call_count == 2
+        assert self.fake_dealer.deal_card.call_count == 2
         assert self.game._can_player_move
 
     def test_game_logic_invalid_inputs(self, class_setup, method_setup):
@@ -185,8 +184,7 @@ class TestGameLogic:
         """
         self.fake_input.side_effect = ["100", "Hit"]
         self.fake_player.get_bankroll.return_value = 100
-        self.fake_player.take_turn.side_effect = [Move.HIT, Move.HIT, Move.HIT]
-        self.fake_dealer.take_turn.return_value = [Move.HIT, Move.HIT]
+        self.fake_player.take_turn.return_value = Move.HIT
         self.fake_player_hand.get_total.side_effect = [14, 24]
         fake_card1 = generate_fake_card(Suit.SPADES, Value.TEN)
         fake_card2 = generate_fake_card(Suit.SPADES, Value.SEVEN)
@@ -199,19 +197,17 @@ class TestGameLogic:
         self.deck.appendleft(fake_card4)
         self.deck.appendleft(fake_card5)
 
-        fake_player_final_hand = mocker.Mock()
-        fake_dealer_final_hand = mocker.Mock()
-        fake_player_final_hand.get_total.return_value = 24
-        fake_dealer_final_hand.get_total.return_value = 15
+        fake_player_hand = mocker.Mock()
+        fake_dealer_hand = mocker.Mock()
+        fake_player_hand.get_total.side_effect = [14,24]
+        fake_dealer_hand.get_total.return_value = 15
 
-        self.fake_player.get_hand.return_value = fake_player_final_hand
-        self.fake_dealer.get_hand.return_value = fake_dealer_final_hand
+        self.fake_player.hand = fake_player_hand
+        self.fake_dealer.hand = fake_dealer_hand
 
         self.fake_player.ante.return_value = 100
 
-        result = self.game.new_hand(
-            self.fake_player, deck=self.deck, dealer=self.fake_dealer
-        )
+        result = self.game.new_hand()
         assert self.fake_player.deal_card.call_count == 2
         assert self.fake_dealer.deal_card.call_count == 2
         assert self.fake_player.take_turn.call_count == 1
@@ -226,80 +222,80 @@ class TestGameLogic:
         self.fake_dealer_hand.get_total.return_value = 20
         self.fake_player_hand.get_size.return_value = 2
         self.fake_dealer_hand.get_size.return_value = 2
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.VICTORY
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate() == Result.VICTORY
+
 
     def test_evaluate_player_blackjack_dealer_21(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_size.return_value = 3
         self.fake_player_hand.get_size.return_value = 2
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.VICTORY
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate()== Result.VICTORY
+
 
     def test_evaluate_player_21_dealer_blackjack(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_size.return_value = 2
         self.fake_player_hand.get_size.return_value = 3
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.DEFEAT
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate() == Result.DEFEAT
+
 
     def test_evaluate_21_push(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_size.return_value = 3
         self.fake_player_hand.get_size.return_value = 4
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.PUSH
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate()== Result.PUSH
+
 
     def test_evaluate_house_wins(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
         self.fake_dealer_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_size.return_value = 2
         self.fake_player_hand.get_size.return_value = 3
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.DEFEAT
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate()== Result.DEFEAT
+
 
     def test_evaluate_push(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
         self.fake_dealer_hand.get_total.return_value = 20
         self.fake_dealer_hand.get_size.return_value = 2
         self.fake_player_hand.get_size.return_value = 3
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.PUSH
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate()== Result.PUSH
+
 
     def test_evaluate_player_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 24
         self.fake_dealer_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_size.return_value = 2
         self.fake_player_hand.get_size.return_value = 3
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.DEFEAT
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate()==Result.DEFEAT
+
 
     def test_evaluate_dealer_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 24
         self.fake_dealer_hand.get_size.return_value = 2
         self.fake_player_hand.get_size.return_value = 3
-        assert (
-            self.game.evaluate(self.fake_player_hand, self.fake_dealer_hand)
-            == Result.VICTORY
-        )
+        self.game.player.hand = self.fake_player_hand
+        self.game.dealer.hand = self.fake_dealer_hand
+        assert self.game.evaluate()== Result.VICTORY
+
 
     def test_game_double_down(self, class_setup, method_setup):
         self.fake_input.side_effect = ["100", "Double"]

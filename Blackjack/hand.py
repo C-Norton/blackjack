@@ -36,7 +36,7 @@ class Hand:
         aces = 0
 
         for card in self.cards:
-            card_value = card.get_value()
+            card_value = card.value
             if not card_value == Value.ACE:
                 total += card_value.score
             else:

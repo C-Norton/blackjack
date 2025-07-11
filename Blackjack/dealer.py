@@ -58,7 +58,7 @@ class Dealer:
             return Move.STAND
 
     def deal_card(self, card):
-        pass
+        self.hand.add_card(card)
 
     def has_busted(self) ->bool:
         """

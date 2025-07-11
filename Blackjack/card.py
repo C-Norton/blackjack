@@ -14,31 +14,16 @@ class Card:
         """
         self.suit: Suit = suit
         self.value: Value = value
-        self._face_down: bool = False
+        self.face_down: bool = False
 
-    @property
-    def face_down(self):
-        """
-        this is a property method that returns True if the card face down
-        :return:
-        """
-        return self._face_down
 
-    @face_down.setter
-    def face_down(self, value):
-        """
-        this is a property method that sets the value of the face down variable
-        :param value:
-        :return:
-        """
-        self._face_down = value
 
     def __str__(self):
         """
         __str__ is a method that returns a string representation of the card
         :return:
         """
-        if not self._face_down:
+        if not self.face_down:
             return self.value.display + str(self.suit)
         else:
             return "##"

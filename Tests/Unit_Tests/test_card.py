@@ -37,14 +37,14 @@ class TestCard:
         card4 = card.Card(Suit.HEARTS, Value.ACE)
 
         # Stupid checks, but hey, just to be sure
-        assert card1.get_value() == Value.SEVEN
-        assert card1.get_suit() == Suit.SPADES
-        assert card2.get_value() == Value.TEN
-        assert card2.get_suit() == Suit.CLUBS
-        assert card3.get_value() == Value.KING
-        assert card3.get_suit() == Suit.DIAMONDS
-        assert card4.get_value() == Value.ACE
-        assert card4.get_suit() == Suit.HEARTS
+        assert card1.value == Value.SEVEN
+        assert card1.suit == Suit.SPADES
+        assert card2.value == Value.TEN
+        assert card2.suit == Suit.CLUBS
+        assert card3.value == Value.KING
+        assert card3.suit == Suit.DIAMONDS
+        assert card4.value == Value.ACE
+        assert card4.suit == Suit.HEARTS
 
         assert str(card1) == "7♠"
         assert str(card2) == "10♣"
