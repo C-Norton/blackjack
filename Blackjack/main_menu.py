@@ -1,4 +1,5 @@
 """"""
+
 from pathlib import Path
 
 from Blackjack.game import Game
@@ -39,7 +40,7 @@ def main_menu():
                 name = input("What player would you like to see stats for? ")
                 player = load_player(Path(f"{name.lower()}.blackjack"))
                 print(player.stats)
-                
+
             case "exit":
                 return
             case _:
@@ -60,7 +61,7 @@ def new_player():
         except ValueError:
             print("Invalid bankroll; please enter an integer")
     player = Player.from_name_bankroll(name, bankroll)
-    save_player(player,Path(f"{name.lower()}.blackjack"))
+    save_player(player, Path(f"{name.lower()}.blackjack"))
     return player
 
 

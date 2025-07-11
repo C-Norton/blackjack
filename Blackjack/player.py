@@ -6,6 +6,7 @@ player has 2 fields initialized by the constructor,
 bankroll, which represents the amount of money the player has
 and name, which reflects the player's name.
 """
+
 import collections
 import json
 from typing import Optional
@@ -20,17 +21,16 @@ class OutOfMoneyException:
 
 
 class Player:
-
-    def __init__(self, stats:dict):
-        self.name:str = stats["name"]
-        self.bankroll:int = stats["bankroll"]
-        self.stats:dict = stats
-        self.bet:int = 0
-        self.hand:Optional[Hand] = None
+    def __init__(self, stats: dict):
+        self.name: str = stats["name"]
+        self.bankroll: int = stats["bankroll"]
+        self.stats: dict = stats
+        self.bet: int = 0
+        self.hand: Optional[Hand] = None
 
     @classmethod
-    def from_name_bankroll(cls, name:str, bankroll:int):
-       return Player(
+    def from_name_bankroll(cls, name: str, bankroll: int):
+        return Player(
             {
                 "name": name,
                 "bankroll": bankroll,
@@ -55,11 +55,11 @@ class Player:
     def update_bankroll(self, net_change):
         if net_change >= 0:
             self.bankroll += net_change
-            self.stats.update({"bankroll":self.bankroll})
+            self.stats.update({"bankroll": self.bankroll})
             return True
         elif net_change < 0 and -1 * net_change <= self.bankroll:
             self.bankroll += net_change
-            self.stats.update({"bankroll":self.bankroll})
+            self.stats.update({"bankroll": self.bankroll})
             return True
         else:
             print(
@@ -86,7 +86,7 @@ class Player:
             else:
                 return False
 
-    def ante(self)->int:
+    def ante(self) -> int:
         if self.bankroll == 0:
             # This behavior is not defined by tests. We will leave this edge case alone, as we don't want to be too
             # picky for the students
@@ -105,15 +105,14 @@ class Player:
                 print("Please enter an integer!")
         self.bet = bet
 
-
-    def double_down(self)-> bool:
+    def double_down(self) -> bool:
         if self.bet <= self.bankroll / 2:
             self.bet *= 2
             return True
         else:
             return False
 
-    def take_turn(self, deck:collections.deque)->Move:
+    def take_turn(self, deck: collections.deque) -> Move:
         print("Please take your turn")
         result = None
         while not result:
@@ -137,12 +136,11 @@ class Player:
         return self.hand.get_total() > 21
 
 
-
-
-def load_player(path) ->Player:
+def load_player(path) -> Player:
     with open(path, "r") as file:
-        stats =  json.load(file)
+        stats = json.load(file)
     return Player(stats)
+
 
 def save_player(
     player: Player,

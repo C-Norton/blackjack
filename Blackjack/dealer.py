@@ -13,6 +13,7 @@ take_turn(Deck)
 reveal_hand() (flips all cards and prints)
 print_hand()  (prints including face down
 """
+
 import collections
 from typing import Optional
 
@@ -29,7 +30,7 @@ class Dealer:
         """
         if dealer_hand is None:
             dealer_hand = Hand()
-        self.hand : Hand = dealer_hand
+        self.hand: Hand = dealer_hand
 
     def reveal_hand(self):
         """
@@ -39,7 +40,7 @@ class Dealer:
         self.hand[-1].face_down = False
         print(self.hand)
 
-    def take_turn(self, deck:collections.deque)->Move:
+    def take_turn(self, deck: collections.deque) -> Move:
         """
         take_turn runs the algorithm for the dealer to select between hit and stand
         :param deck: a deque of card objects
@@ -60,7 +61,7 @@ class Dealer:
     def deal_card(self, card):
         self.hand.add_card(card)
 
-    def has_busted(self) ->bool:
+    def has_busted(self) -> bool:
         """
         A simple rule that tests if the dealer has busted by checking the total value of the hand
         :return: boolean, true if the dealer has busted

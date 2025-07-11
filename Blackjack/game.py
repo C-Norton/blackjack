@@ -16,12 +16,12 @@ from .suit import Suit
 from .value import Value
 
 
-def generate_deck()->collections.deque:
+def generate_deck() -> collections.deque:
     """
     generate deck generates a deck of 52 card objects, adds them to a deque, and shuffles them
     :return: the generated deque object
     """
-    deck :collections.deque[Card] = collections.deque()
+    deck: collections.deque[Card] = collections.deque()
     for suit in Suit:
         for value in Value:
             card = Card(suit, value)
@@ -34,7 +34,13 @@ class Game:
     """
     Game handles the flow of play, including generating new hands and all the helper methods therein
     """
-    def __init__(self, player:Player, dealer:Optional[Dealer]=None, deck:Optional[collections.deque]=None):
+
+    def __init__(
+        self,
+        player: Player,
+        dealer: Optional[Dealer] = None,
+        deck: Optional[collections.deque] = None,
+    ):
         """
         __init__ creates a new Game instance, and sets up the class for play.
 
@@ -50,9 +56,7 @@ class Game:
         self.player = player
         self._can_player_move = True
 
-
-
-    def deal(self)->None:
+    def deal(self) -> None:
         """
         deal prepares the hand for play by dealing 2 cards to the player and 2 to dealer, alternating who gets what card
         it also requests an ante (initial bet) from the player
@@ -69,7 +73,7 @@ class Game:
         self.player.deal_card(self.deck)
         self.dealer.deal_card(self.deck)
 
-    def play_round(self)->bool:
+    def play_round(self) -> bool:
         """
         play round returns a boolean as to if there should be another round
         :return: boolean, true if another round is warranted
@@ -100,7 +104,7 @@ class Game:
             return False
         return True
 
-    def new_hand(self)->Result:
+    def new_hand(self) -> Result:
         """
         Deals a new hand, plays the game, and returns a tuple of a result and the net change to bankroll
         Order of operations:
@@ -124,9 +128,12 @@ class Game:
 
         self.dealer.reveal_hand()
 
-        return self.evaluate()
+        result = self.evaluate()
+        self.player.hand = None
+        self.dealer.hand = None
+        return result
 
-    def evaluate(self)->Result:
+    def evaluate(self) -> Result:
         """
         Blackjack scoring:
         In order of priority

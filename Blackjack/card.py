@@ -16,8 +16,6 @@ class Card:
         self.value: Value = value
         self.face_down: bool = False
 
-
-
     def __str__(self):
         """
         __str__ is a method that returns a string representation of the card

@@ -37,7 +37,7 @@ class TestGameLogic:
         self.fake_dealer_hand = mocker.Mock()
         self.fake_player_hand = mocker.Mock()
         self.fake_dealer = mocker.Mock()
-        self.game = Blackjack.game.Game(self.fake_player,self.fake_dealer,self.deck)
+        self.game = Blackjack.game.Game(self.fake_player, self.fake_dealer, self.deck)
         yield
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
@@ -199,7 +199,7 @@ class TestGameLogic:
 
         fake_player_hand = mocker.Mock()
         fake_dealer_hand = mocker.Mock()
-        fake_player_hand.get_total.side_effect = [14,24]
+        fake_player_hand.get_total.side_effect = [14, 24]
         fake_dealer_hand.get_total.return_value = 15
 
         self.fake_player.hand = fake_player_hand
@@ -226,7 +226,6 @@ class TestGameLogic:
         self.game.dealer.hand = self.fake_dealer_hand
         assert self.game.evaluate() == Result.VICTORY
 
-
     def test_evaluate_player_blackjack_dealer_21(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 21
@@ -234,8 +233,7 @@ class TestGameLogic:
         self.fake_player_hand.get_size.return_value = 2
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate()== Result.VICTORY
-
+        assert self.game.evaluate() == Result.VICTORY
 
     def test_evaluate_player_21_dealer_blackjack(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
@@ -246,7 +244,6 @@ class TestGameLogic:
         self.game.dealer.hand = self.fake_dealer_hand
         assert self.game.evaluate() == Result.DEFEAT
 
-
     def test_evaluate_21_push(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 21
@@ -254,8 +251,7 @@ class TestGameLogic:
         self.fake_player_hand.get_size.return_value = 4
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate()== Result.PUSH
-
+        assert self.game.evaluate() == Result.PUSH
 
     def test_evaluate_house_wins(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
@@ -264,8 +260,7 @@ class TestGameLogic:
         self.fake_player_hand.get_size.return_value = 3
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate()== Result.DEFEAT
-
+        assert self.game.evaluate() == Result.DEFEAT
 
     def test_evaluate_push(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 20
@@ -274,8 +269,7 @@ class TestGameLogic:
         self.fake_player_hand.get_size.return_value = 3
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate()== Result.PUSH
-
+        assert self.game.evaluate() == Result.PUSH
 
     def test_evaluate_player_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 24
@@ -284,8 +278,7 @@ class TestGameLogic:
         self.fake_player_hand.get_size.return_value = 3
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate()==Result.DEFEAT
-
+        assert self.game.evaluate() == Result.DEFEAT
 
     def test_evaluate_dealer_bust(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21
@@ -294,8 +287,7 @@ class TestGameLogic:
         self.fake_player_hand.get_size.return_value = 3
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate()== Result.VICTORY
-
+        assert self.game.evaluate() == Result.VICTORY
 
     def test_game_double_down(self, class_setup, method_setup):
         self.fake_input.side_effect = ["100", "Double"]
