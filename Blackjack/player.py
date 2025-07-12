@@ -20,7 +20,7 @@ class OutOfMoneyException:
     print("The house always wins!")
 
 
-class Player:
+class Player(game_participant):
     def __init__(self, stats: dict):
         self.name: str = stats["name"]
         self.bankroll: int = stats["bankroll"]
