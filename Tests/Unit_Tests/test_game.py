@@ -1,5 +1,5 @@
 """
-FILENAME: test_game_logic.py
+FILENAME: test_game.py
 
 AUTHOR: Channing
 CREATED ON: 7/4/2025
@@ -37,6 +37,8 @@ class TestGameLogic:
         self.fake_dealer_hand = mocker.Mock()
         self.fake_player_hand = mocker.Mock()
         self.fake_dealer = mocker.Mock()
+        self.fake_dealer.hand = self.fake_dealer_hand
+        self.fake_player.hand = self.fake_player_hand
         self.game = Blackjack.game.Game(self.fake_player, self.fake_dealer, self.deck)
         yield
         print(f"Tearing down method: {request.function.__name__}")
@@ -97,16 +99,15 @@ class TestGameLogic:
         assert not self.game.play_round()
         assert not self.game._can_player_move
 
-    def test_deal(self, class_setup, method_setup, generate_fake_card, mocker):
-        deck = collections.deque()
+    def test_deal(self, class_setup, method_setup, generate_fake_card):
         fake_card_1 = generate_fake_card(Suit.SPADES, Value.ACE)
         fake_card_2 = generate_fake_card(Suit.CLUBS, Value.ACE)
         fake_card_3 = generate_fake_card(Suit.DIAMONDS, Value.ACE)
         fake_card_4 = generate_fake_card(Suit.HEARTS, Value.ACE)
-        deck.append(fake_card_1)
-        deck.append(fake_card_2)
-        deck.append(fake_card_3)
-        deck.append(fake_card_4)
+        self.deck.append(fake_card_1)
+        self.deck.append(fake_card_2)
+        self.deck.append(fake_card_3)
+        self.deck.append(fake_card_4)
 
         self.game.deal()
         assert self.fake_player.deal_card.call_count == 2
@@ -185,7 +186,8 @@ class TestGameLogic:
         self.fake_input.side_effect = ["100", "Hit"]
         self.fake_player.get_bankroll.return_value = 100
         self.fake_player.take_turn.return_value = Move.HIT
-        self.fake_player_hand.get_total.side_effect = [14, 24]
+        self.fake_player_hand.get_total.return_value = 24
+        self.fake_dealer_hand.get_total.return_value = 15
         fake_card1 = generate_fake_card(Suit.SPADES, Value.TEN)
         fake_card2 = generate_fake_card(Suit.SPADES, Value.SEVEN)
         fake_card3 = generate_fake_card(Suit.SPADES, Value.FOUR)
@@ -196,14 +198,6 @@ class TestGameLogic:
         self.deck.appendleft(fake_card3)
         self.deck.appendleft(fake_card4)
         self.deck.appendleft(fake_card5)
-
-        fake_player_hand = mocker.Mock()
-        fake_dealer_hand = mocker.Mock()
-        fake_player_hand.get_total.side_effect = [14, 24]
-        fake_dealer_hand.get_total.return_value = 15
-
-        self.fake_player.hand = fake_player_hand
-        self.fake_dealer.hand = fake_dealer_hand
 
         self.fake_player.ante.return_value = 100
 

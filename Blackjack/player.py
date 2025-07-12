@@ -40,14 +40,10 @@ class Player:
             }
         )
 
-    def get_name(self):
-        return self.name
-
     def deal_card(self, card):
         self.hand.add_card(card)
 
-
-    def update_bankroll(self, net_change)->bool:
+    def update_bankroll(self, net_change) -> bool:
         if net_change >= 0:
             self.bankroll += net_change
             self.stats.update({"bankroll": self.bankroll})
@@ -62,21 +58,25 @@ class Player:
             )
             return False
 
-    def update_stats(self, result_tuple) ->bool:
+    def update_stats(self, result_tuple) -> bool:
         if result_tuple[0] == Result.VICTORY:
             if result_tuple[1] > 0:
-                self.stats.update({"wins": self.stats.get("wins")+1})
-                self.stats.adjust_bankroll(result_tuple[1])
+                self.stats.update({"wins": self.stats.get("wins") + 1})
+                self.stats.update(
+                    {"bankroll": self.stats.get("bankroll") + result_tuple[1]}
+                )
                 return True
             else:
                 return False
         elif result_tuple[0] == Result.PUSH:
-            self.stats.update({"pushes": self.stats.get("pushes")+1})
+            self.stats.update({"pushes": self.stats.get("pushes") + 1})
             return True
         else:
             if 0 > result_tuple[1] >= -self.bankroll:
-                self.stats.update({"losses": self.stats.get("losses")+1})
-                self.stats.adjust_bankroll(result_tuple[1])
+                self.stats.update({"losses": self.stats.get("losses") + 1})
+                self.stats.update(
+                    {"bankroll": self.stats.get("bankroll") + result_tuple[1]}
+                )
                 return True
             else:
                 return False
@@ -132,6 +132,7 @@ class Player:
 
     def __eq__(self, other):
         return self.stats == other.stats
+
 
 def load_player(path) -> Player:
     with open(path, "r") as file:

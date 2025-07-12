@@ -46,19 +46,15 @@ class Dealer:
         :param deck: a deque of card objects
         :return: a move enum representing the dealer's choice
         """
-        if self.hand.get_size() < 2:
-            card = deck.popleft()
-            if self.hand.get_size() == 1:
-                card.flip()
-            self.hand.add_card(card)
-            return Move.HIT
-        elif self.hand.get_total() < 17:
+        if self.hand.get_total() < 17:
             self.hand.add_card(deck.popleft())
             return Move.HIT
         else:
             return Move.STAND
 
     def deal_card(self, card):
+        if self.hand.get_size() == 0:
+            card.face_down = True
         self.hand.add_card(card)
 
     def has_busted(self) -> bool:

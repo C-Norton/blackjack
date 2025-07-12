@@ -39,29 +39,23 @@ class TestMenu:
         # TODO: Add your teardown code here
 
     def test_play_hand(self, class_setup, method_setup):
-        self.fake_input.side_effect = ["1"]
+        self.fake_input.side_effect = ["1", "Player 1", "exit"]
         Blackjack.main_menu.main_menu()
 
-        assert self.fake_print.call_count == 5
-        assert self.fake_input.call_count == 1
         assert self.new_hand.call_count == 1
 
     def test_bad_input(self, class_setup, method_setup, mocker):
         new_player = mocker.patch(
             "Blackjack.main_menu.new_player", return_value="mocked"
         )
-        self.fake_input.side_effect = ["Foo", 2]
+        self.fake_input.side_effect = ["Foo", "2", "player 2", "1001", "exit"]
         Blackjack.main_menu.main_menu()
 
         assert new_player.call_count == 1
 
-        assert self.fake_print.call_count == 10
-        assert self.fake_input.call_count == 2
-
-
     def test_new_player(self, class_setup, method_setup):
-        self.fake_input.side_effect = ["Player 1", "One Thousand", 1001]
+        self.fake_input.side_effect = ["Player 1", "One Thousand", "1001"]
         new_player = Blackjack.main_menu.new_player()
         assert self.fake_input.call_count == 3
-        assert new_player.get_name() == "Player 1"
-        assert new_player.get_bankroll() == 1001
+        assert new_player.name == "Player 1"
+        assert new_player.bankroll == 1001

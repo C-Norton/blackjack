@@ -68,10 +68,10 @@ class Game:
             self.player.hand = Hand()
         if self.dealer.hand is None:
             self.dealer.hand = Hand()
-        self.player.deal_card(self.deck)
-        self.dealer.deal_card(self.deck)
-        self.player.deal_card(self.deck)
-        self.dealer.deal_card(self.deck)
+        self.player.deal_card(self.deck.pop())
+        self.dealer.deal_card(self.deck.pop())
+        self.player.deal_card(self.deck.pop())
+        self.dealer.deal_card(self.deck.pop())
 
     def play_round(self) -> bool:
         """

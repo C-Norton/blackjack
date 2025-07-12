@@ -48,21 +48,22 @@ class TestPlayer:
         self.fake_input.side_effect = ["Player 1", "1000"]
         self.player = Blackjack.main_menu.new_player()
         assert type(self.player) is Player
-        assert self.player.get_name() == "Player 1"
+        assert self.player.name == "Player 1"
         assert self.player.bankroll == 1000
         self.fake_print.reset_mock()
         assert self.fake_input.call_count == 2
         self.fake_input.reset_mock()
 
     def test_bad_input(self, class_setup, method_setup):
+        path = Path("player 2.blackjack")
         self.fake_input.side_effect = ["Player 2", "Bad Input", "2000"]
         self.player = Blackjack.main_menu.new_player()
         assert type(self.player) is Player
 
-        assert self.player.get_name() == "Player 2"
+        assert self.player.name == "Player 2"
         assert self.player.bankroll == 2000
         assert self.fake_input.call_count == 3
-
+        Path.unlink(path)
 
     def test_update_bankroll(self, class_setup, method_setup):
         assert self.player.update_bankroll(100)
@@ -70,41 +71,32 @@ class TestPlayer:
 
     def test_negative_bankroll_update(self, class_setup, method_setup):
         assert self.player.update_bankroll(-100)
-        assert self.fake_stats.adjust_bankroll.call_count == 1
+        assert self.player.bankroll == 0
 
     def test_invalid_bankroll_update(self, class_setup, method_setup):
         assert not self.player.update_bankroll(-101)
 
     def test_update_stats_victory(self, class_setup, method_setup):
         self.player.update_stats((Result.VICTORY, 100))
-        assert self.fake_stats.add_win.call_count == 1
-        assert self.fake_stats.adjust_bankroll.call_count == 1
-        # Get the most recent call's first positional argument
-        # first zero gets positional arguments tuple, second zero gives first arg
-        assert self.fake_stats.adjust_bankroll.call_args[0][0] == 100
+        assert self.player.stats.get("wins") == 1
+        assert self.player.stats.get("bankroll") == 200
 
     def test_update_stats_defeat(self, class_setup, method_setup):
         self.player.update_stats((Result.DEFEAT, -100))
-        assert self.fake_stats.add_loss.call_count == 1
-        assert self.fake_stats.adjust_bankroll.call_count == 1
-        # Get the most recent call's first positional argument
-        assert self.fake_stats.adjust_bankroll.call_args[0][0] == -100
+        assert self.player.stats.get("losses") == 1
+        assert self.player.stats.get("bankroll") == 0
 
     def test_update_stats_push(self, class_setup, method_setup):
         self.player.update_stats((Result.PUSH, 100))
-        assert self.fake_stats.add_push.call_count == 1
-        assert self.fake_stats.adjust_bankroll.call_count == 0
+        assert self.player.stats.get("pushes") == 1
+        assert self.player.stats.get("bankroll") == 100
 
     def test_update_stats_insufficient_funds(self, class_setup, method_setup):
         assert not self.player.update_stats((Result.DEFEAT, -101))
-        assert self.fake_stats.add_loss.call_count == 0
-        assert self.fake_stats.adjust_bankroll.call_count == 0
 
     # can't lose money on a victory
     def test_update_stats_invalid(self, class_setup, method_setup):
         assert not self.player.update_stats((Result.VICTORY, -100))
-        assert self.fake_stats.add_victory.call_count == 0
-        assert self.fake_stats.adjust_bankroll.call_count == 0
 
     def test_ante(self, class_setup, method_setup):
         self.fake_input.return_value = "100"
@@ -115,7 +107,6 @@ class TestPlayer:
         self.fake_input.side_effect = ["hello", "101", "100"]
         self.player.ante()
         assert self.player.bet == 100
-
 
     def test_double_down(self, class_setup, method_setup):
         self.player.bet = 50
@@ -167,11 +158,8 @@ class TestPlayer:
         self.player.hand = self.fake_hand
         assert not self.player.has_busted()
 
-    def test_get_hand(self, class_setup, method_setup):
-        self.player.hand = self.fake_hand
-        assert self.player.get_hand() == self.fake_hand
-
     def test_save_load_player(self, class_setup, method_setup, mocker):
+        path = Path("player 1.blackjack")
         try:
             my_player = Player("player 1", 1000)
             my_player.stats = {
@@ -181,7 +169,6 @@ class TestPlayer:
                 "losses": 3,
                 "pushes": 2,
             }
-            path = Path("test_player.blackjack")
             player.save_player(my_player, path)
             assert path.exists()
             result = player.load_player(path)

@@ -21,21 +21,21 @@ def main_menu():
                 print("2. Create a new player")
                 print("3. Check player stats")
                 print("exit to leave")
-                option = int(input("Please enter an option: "))
+                option = input("Please enter an option: ")
             except ValueError:
                 print("Invalid input; please enter a number!")
 
         match option:
-            case 1:
+            case "1":
                 print("Playing a hand")
                 playername = input("What player will be playing?")
                 player = load_player(Path(f"{playername.lower()}.blackjack"))
                 game = Game(player)
                 game.new_hand()
-            case 2:
+            case "2":
                 print("Creating a player")
                 new_player()
-            case 3:
+            case "3":
                 print("Showing stats")
                 name = input("What player would you like to see stats for? ")
                 player = load_player(Path(f"{name.lower()}.blackjack"))

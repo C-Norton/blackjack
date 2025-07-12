@@ -30,7 +30,7 @@ class TestDealer:
         print(f"Setting up method: {request.function.__name__}")
         self.deck = collections.deque()
         self.fake_hand = mocker.Mock()
-        self.my_dealer = dealer.Dealer(self.fake_hand)
+        self.dealer = dealer.Dealer(self.fake_hand)
         yield
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
@@ -59,21 +59,21 @@ class TestDealer:
 
         self.fake_hand.get_total.return_value = 0
         self.fake_hand.get_size.return_value = 0
-        move1 = self.my_dealer.take_turn(self.deck)
+        move1 = self.dealer.take_turn(self.deck)
         assert len(self.deck) == 3
         assert self.deck[0] == fake_card2
         assert move1 == Move.HIT
 
         self.fake_hand.get_total.return_value = 11
         self.fake_hand.get_size.return_value = 1
-        move2 = self.my_dealer.take_turn(self.deck)
+        move2 = self.dealer.take_turn(self.deck)
         assert len(self.deck) == 2
         assert self.deck[0] == fake_card3
         assert move2 == Move.HIT
 
         self.fake_hand.get_total.return_value = 21
         self.fake_hand.get_size.return_value = 2
-        move3 = self.my_dealer.take_turn(self.deck)
+        move3 = self.dealer.take_turn(self.deck)
         assert len(self.deck) == 2
         assert self.deck[0] == fake_card3
         assert move3 == Move.STAND
@@ -107,7 +107,7 @@ class TestDealer:
 
         self.fake_hand.get_total.return_value = 0
         self.fake_hand.get_size.return_value = 0
-        move1 = self.my_dealer.take_turn(self.deck)
+        move1 = self.dealer.take_turn(self.deck)
 
         assert len(self.deck) == 3
         assert self.deck[0] == fake_card2
@@ -115,25 +115,36 @@ class TestDealer:
 
         self.fake_hand.get_total.return_value = 5
         self.fake_hand.get_size.return_value = 1
-        move2 = self.my_dealer.take_turn(self.deck)
+        move2 = self.dealer.take_turn(self.deck)
         assert len(self.deck) == 2
         assert self.deck[0] == fake_card3
         assert move2 == Move.HIT
 
         self.fake_hand.get_total.return_value = 15
         self.fake_hand.get_size.return_value = 2
-        move3 = self.my_dealer.take_turn(self.deck)
+        move3 = self.dealer.take_turn(self.deck)
         assert len(self.deck) == 1
         assert self.deck[0] == fake_card4
         assert move3 == Move.HIT
 
         self.fake_hand.get_total.return_value = 16
         self.fake_hand.get_size.return_value = 3
-        move4 = self.my_dealer.take_turn(self.deck)
+        move4 = self.dealer.take_turn(self.deck)
         assert len(self.deck) == 0
         assert move4 == Move.HIT
 
         self.fake_hand.get_total.return_value = 23
         self.fake_hand.get_size.return_value = 4
-        move5 = self.my_dealer.take_turn(self.deck)
+        move5 = self.dealer.take_turn(self.deck)
         assert move5 == Move.STAND
+
+    def test_first_card_flipped(self, class_setup, method_setup, generate_fake_card):
+        fake_card1 = generate_fake_card(Suit.CLUBS, Value.FIVE)
+        fake_card2 = generate_fake_card(Suit.SPADES, Value.QUEEN)
+        fake_card1.facedown = False
+        self.deck.append(fake_card1)
+        self.deck.append(fake_card2)
+        self.dealer.deal_card(self.deck.pop())
+        self.dealer.deal_card(self.deck.pop())
+        assert fake_card2.facedown
+        assert not fake_card1.facedown

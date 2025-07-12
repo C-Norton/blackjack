@@ -22,6 +22,6 @@ class Card:
         :return:
         """
         if not self.face_down:
-            return self.value.display + str(self.suit)
+            return str(self.value) + str(self.suit)
         else:
             return "##"
