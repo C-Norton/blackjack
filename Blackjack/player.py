@@ -9,6 +9,7 @@ and name, which reflects the player's name.
 
 import collections
 import json
+from pathlib import Path
 from typing import Optional
 
 from .hand import Hand
@@ -127,14 +128,11 @@ class Player(game_participant):
                     print("You don't have enough money to double down.")
         return result
 
-    def has_busted(self):
-        return self.hand.get_total() > 21
-
     def __eq__(self, other):
         return self.stats == other.stats
 
 
-def load_player(path) -> Player:
+def load_player(path: Path) -> Player:
     with open(path, "r") as file:
         stats = json.load(file)
     return Player(stats)
@@ -142,7 +140,7 @@ def load_player(path) -> Player:
 
 def save_player(
     player: Player,
-    path,
+    path: Path,
 ):
     with open(path, "w") as file:
         json.dump(player.stats, file)

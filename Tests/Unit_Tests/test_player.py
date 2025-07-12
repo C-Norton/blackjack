@@ -148,16 +148,6 @@ class TestPlayer:
         assert len(self.deck) == 0
         assert self.fake_hand.add_card.call_count == 1
 
-    def test_has_busted(self, class_setup, method_setup):
-        self.fake_hand.get_total.return_value = 24
-        self.player.hand = self.fake_hand
-        assert self.player.has_busted()
-
-    def test_has_not_busted(self, class_setup, method_setup):
-        self.fake_hand.get_total.return_value = 21
-        self.player.hand = self.fake_hand
-        assert not self.player.has_busted()
-
     def test_save_load_player(self, class_setup, method_setup, mocker):
         path = Path("player 1.blackjack")
         try:
