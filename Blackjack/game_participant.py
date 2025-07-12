@@ -1,2 +1,5 @@
+from .result import Result
+
 class game_participant:
-    pass
+    def take_turn(self, deck) -> Result:
+        pass
