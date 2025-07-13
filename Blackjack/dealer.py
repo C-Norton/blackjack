@@ -17,17 +17,19 @@ print_hand()  (prints including face down
 import collections
 from typing import Optional
 
+from .game_participant import GameParticipant
 from .hand import Hand
 from .move import Move
 
 
-class Dealer:
+class Dealer (GameParticipant):
     def __init__(self, dealer_hand: Optional[Hand] = None):
         """
         __init__ is a method that creates a new Dealer object
         :param dealer_hand: a hand object for the dealer. If None, the dealer will create a new hand. This is
         dependency injection
         """
+        super().__init__()
         if dealer_hand is None:
             dealer_hand = Hand()
         self.hand: Hand = dealer_hand
@@ -57,9 +59,4 @@ class Dealer:
             card.face_down = True
         self.hand.add_card(card)
 
-    def has_busted(self) -> bool:
-        """
-        A simple rule that tests if the dealer has busted by checking the total value of the hand
-        :return: boolean, true if the dealer has busted
-        """
-        return self.hand.get_total() > 21
+    

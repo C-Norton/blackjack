@@ -84,7 +84,7 @@ class Game:
         print(str(self.player.hand))
         if self._can_player_move:
             player_turn = self.player.take_turn(self.deck)
-            if self.player.hand.get_total() > 21:
+            if self.player.has_busted():
                 self._can_player_move = False
                 return False
 
@@ -96,7 +96,7 @@ class Game:
         else:
             player_turn = Move.STAND
         dealer_turn = self.dealer.take_turn(self.deck)
-        if self.dealer.hand.get_total() > 21:
+        if self.dealer.has_busted():
             return False
         if (
             player_turn == Move.STAND or player_turn == Move.DOUBLE_DOWN

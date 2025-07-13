@@ -15,14 +15,16 @@ from typing import Optional
 from .hand import Hand
 from .move import Move
 from .result import Result
+from .game_participant import GameParticipant
+
+class OutOfMoneyException(Exception):
+    def __init__(self, message: str):
+        print("The house always wins!")
 
 
-class OutOfMoneyException:
-    print("The house always wins!")
-
-
-class Player(game_participant):
+class Player(GameParticipant):
     def __init__(self, stats: dict):
+        super().__init__()
         self.name: str = stats["name"]
         self.bankroll: int = stats["bankroll"]
         self.stats: dict = stats

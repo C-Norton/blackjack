@@ -65,6 +65,8 @@ class TestGameLogic:
         self.fake_player.hand = self.fake_player_hand
         self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 17
+        self.fake_player.has_busted.return_value = False
+        self.fake_dealer.has_busted.return_value = False
         assert self.game._can_player_move
         assert self.game.play_round()
         assert self.game._can_player_move
@@ -75,6 +77,8 @@ class TestGameLogic:
         self.fake_player.hand = self.fake_player_hand
         self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 17
+        self.fake_player.has_busted.return_value = False
+        self.fake_dealer.has_busted.return_value = False
         assert self.game._can_player_move
         assert self.game.play_round()
         assert not self.game._can_player_move
@@ -85,6 +89,8 @@ class TestGameLogic:
         self.fake_player.hand = self.fake_player_hand
         self.fake_dealer.hand = self.fake_dealer_hand
         self.fake_dealer_hand.get_total.return_value = 22
+        self.fake_player.has_busted.return_value = True
+        self.fake_player.has_busted.return_value = False
         assert self.game._can_player_move
         assert not self.game.play_round()
         assert self.game._can_player_move
