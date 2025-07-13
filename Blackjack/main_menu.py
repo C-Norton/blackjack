@@ -31,7 +31,7 @@ def main_menu():
                 playername = input("What player will be playing?")
                 player = load_player(Path(f"{playername.lower()}.blackjack"))
                 game = Game(player)
-                game.new_hand()
+                player.update_stats(game.new_hand())
             case "2":
                 print("Creating a player")
                 new_player()

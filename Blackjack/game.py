@@ -4,8 +4,10 @@ Game handles the flow of play
 
 import collections
 import random
+from random import betavariate
 from typing import Optional
 
+from Blackjack.result import Result
 from .card import Card
 from .dealer import Dealer
 from .hand import Hand
@@ -78,10 +80,6 @@ class Game:
         play round returns a boolean as to if there should be another round
         :return: boolean, true if another round is warranted
         """
-        print("Dealer's Hand")
-        print(str(self.dealer.hand))
-        print(f"{self.player.name}'s Hand")
-        print(str(self.player.hand))
         if self._can_player_move:
             player_turn = self.player.take_turn(self.deck)
             if self.player.has_busted():
@@ -104,7 +102,7 @@ class Game:
             return False
         return True
 
-    def new_hand(self) -> Result:
+    def new_hand(self) -> tuple[Result, int]:
         """
         Deals a new hand, plays the game, and returns a tuple of a result and the net change to bankroll
         Order of operations:
@@ -121,17 +119,33 @@ class Game:
         :return:
         """
         self.deal()
+        print("Dealer's Hand")
+        print(str(self.dealer.hand))
+        print(f"{self.player.name}'s Hand")
+        print(str(self.player.hand))
 
         while self.play_round():
             # play round completes via side effects, therefore this loop condition is all we need
-            pass
-
+            print("Dealer's Hand")
+            print(str(self.dealer.hand))
+            print(f"{self.player.name}'s Hand")
+            print(str(self.player.hand))
+        print("Dealer's Hand after reveal")
         self.dealer.reveal_hand()
-
+        print(f"{self.player.name}'s final hand")
+        print(str(self.player.hand))
         result = self.evaluate()
+        print(result.name)
         self.player.hand = None
         self.dealer.hand = None
-        return result
+        net_change:int = 0
+        if result == Result.VICTORY:
+            net_change = self.player.bet
+        elif result == Result.DEFEAT:
+            net_change = -self.player.bet
+        else:
+            net_change = 0
+        return result, net_change
 
     def evaluate(self) -> Result:
         """
