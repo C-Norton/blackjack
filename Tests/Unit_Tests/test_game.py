@@ -120,33 +120,7 @@ class TestGameLogic:
         assert self.fake_dealer.deal_card.call_count == 2
         assert self.game._can_player_move
 
-    def test_game_logic_invalid_inputs(self, class_setup, method_setup):
-        """
-        This function tests several full games.
 
-        Game Scenarios:
-            1:
-                Player bankroll 100
-                Player antes 150
-                Result: Insufficient funds
-            2:
-                Player bankroll 100
-                Player antes 100
-                Dealer Cards: 7, 8
-                Player cards: 10, 4
-                Player Splits
-                Result: Invalid Split
-            3:
-                Player bankroll 100
-                Player antes 100
-                Dealer Cards: 10, jack
-                Player cards: ace, 8
-                Player doubles down
-                Result: Insufficient funds
-
-        :param fake_print_fake_input:
-        :return:
-        """
 
     def test_game_bust(self, class_setup, method_setup, generate_fake_card, mocker):
         """
@@ -176,14 +150,6 @@ class TestGameLogic:
                 Player cards: 10, 4
                 Player hit: Jack
                 Result: Player Loss
-            2:
-                Player bankroll 200
-                Player antes 100
-                Dealer Cards: 10, jack
-                Player cards: ace, 8
-                Player doubles down
-                Result: Player loss
-
 
 
         :param fake_print_fake_input:
