@@ -190,7 +190,6 @@ class TestGameLogic:
         :return:
         """
         self.fake_input.side_effect = ["100", "Hit"]
-        self.fake_player.get_bankroll.return_value = 100
         self.fake_player.take_turn.return_value = Move.HIT
         self.fake_player_hand.get_total.return_value = 24
         self.fake_dealer_hand.get_total.return_value = 15
@@ -206,7 +205,7 @@ class TestGameLogic:
         self.deck.appendleft(fake_card5)
 
         self.fake_player.ante.return_value = 100
-
+        self.fake_player.bet = 100
         result = self.game.new_hand()
         assert self.fake_player.deal_card.call_count == 2
         assert self.fake_dealer.deal_card.call_count == 2
@@ -215,7 +214,7 @@ class TestGameLogic:
 
         assert self.fake_player.ante.call_count == 1
 
-        assert result == Result.DEFEAT
+        assert result == (Result.DEFEAT, -100)
 
     def test_evaluate_player_wins(self, class_setup, method_setup):
         self.fake_player_hand.get_total.return_value = 21

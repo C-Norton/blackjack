@@ -26,12 +26,13 @@ class TestMenu:
         print(f"Setting up method: {request.function.__name__}")
         self.fake_input = mocker.patch("builtins.input")
         self.fake_print = mocker.patch("builtins.print")
+        self.fake_player = mocker.Mock()
         self.new_hand = mocker.patch(
             "Blackjack.game.Game.new_hand", return_value="mocked"
         )
 
         self.load_player = mocker.patch(
-            "Blackjack.main_menu.load_player", return_value="mocked"
+            "Blackjack.main_menu.load_player", return_value=self.fake_player
         )
 
         yield
