@@ -66,7 +66,7 @@ class Player(GameParticipant):
             if result_tuple[1] > 0:
                 self.stats.update({"wins": self.stats.get("wins") + 1})
                 self.stats.update(
-                    {"bankroll": self.stats.get("bankroll") + result_tuple[1]}
+                    {"bankroll": self.bankroll + result_tuple[1]}
                 )
                 return True
             else:
@@ -78,7 +78,7 @@ class Player(GameParticipant):
             if 0 > result_tuple[1] >= -self.bankroll:
                 self.stats.update({"losses": self.stats.get("losses") + 1})
                 self.stats.update(
-                    {"bankroll": self.stats.get("bankroll") +result_tuple[1]}
+                    {"bankroll": self.bankroll +result_tuple[1]}
                 )
                 return True
             else:

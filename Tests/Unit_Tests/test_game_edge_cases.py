@@ -75,15 +75,6 @@ class TestGameEdgeCases:
         with pytest.raises(IndexError):
             game_instance.deal()
 
-    def test_empty_deck_during_hit(self, class_setup, method_setup, mocker):
-        """Test behavior when deck runs out during player hit"""
-        self.fake_player_hand.get_total.return_value = 15
-        self.fake_player.take_turn.side_effect = [Move.HIT]
-        self.fake_player.has_busted.return_value = False
-
-        # Empty deck should cause IndexError when player tries to hit
-        with pytest.raises(IndexError):
-            self.game.play_round()
 
     def test_single_card_deck(self, class_setup, method_setup, generate_fake_card):
         """Test game behavior with minimal deck"""

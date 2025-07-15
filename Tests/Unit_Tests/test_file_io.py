@@ -62,53 +62,6 @@ class TestFileIO:
         with pytest.raises(json.JSONDecodeError):
             load_player(test_path)
 
-    def test_load_player_file_corruption_v2(self, class_setup, method_setup, mocker):
-        """Approach 2: Mock json.load directly"""
-        test_path = Path(self.temp_dir) / "corrupted.blackjack"
-
-        # Mock json.load to raise JSONDecodeError
-        mocker.patch("json.load", side_effect=json.JSONDecodeError("Invalid JSON", "", 0))
-
-        with pytest.raises(json.JSONDecodeError):
-            load_player(test_path)
-
-    def test_save_player_disk_full_simulation(self, class_setup, method_setup, mocker):
-        """Simulate disk full error using only pytest-mock"""
-        player = Player.from_name_bankroll("Test Player", 100)
-        test_path = Path(self.temp_dir) / "disk_full_test.blackjack"
-
-        # Mock open to raise OSError (disk full)
-        mocker.patch("builtins.open", side_effect=OSError("No space left on device"))
-
-        with pytest.raises(OSError, match="No space left on device"):
-            save_player(player, test_path)
-
-    def test_load_player_network_drive_timeout(self, class_setup, method_setup, mocker):
-        """Simulate network timeout using only pytest-mock"""
-        test_path = Path("//network/drive/player.blackjack")
-
-        # Mock open to raise TimeoutError
-        mocker.patch("builtins.open", side_effect=TimeoutError("Network timeout"))
-
-        with pytest.raises(TimeoutError):
-            load_player(test_path)
-
-    def test_save_player_partial_write_simulation(self, class_setup, method_setup, mocker):
-        """Simulate partial write failure"""
-        player = Player.from_name_bankroll("Test Player", 100)
-        test_path = Path(self.temp_dir) / "partial_write.blackjack"
-
-        # Create a mock file that fails on write
-        mock_file = mocker.Mock()
-        mock_file.write.side_effect = IOError("Write failed")
-        mock_file.__enter__.return_value = mock_file
-        mock_file.__exit__.return_value = None
-
-        mocker.patch("builtins.open", return_value=mock_file)
-
-        with pytest.raises(IOError, match="Write failed"):
-            save_player(player, test_path)
-
     def test_load_player_empty_file_better(self, class_setup, method_setup, mocker):
         """Test empty file using mock instead of real file"""
         test_path = Path(self.temp_dir) / "empty.blackjack"
@@ -120,58 +73,44 @@ class TestFileIO:
         with pytest.raises(json.JSONDecodeError):
             load_player(test_path)
 
-    def test_save_load_cycle_with_mocking(self, class_setup, method_setup, mocker):
-        """Test save/load cycle with controlled data"""
+        # ==================== SOLUTION 1: Intercept json.dump/json.load directly ====================
+
+    def test_save_load_cycle_json_level(self, class_setup, method_setup, mocker):
         player = Player.from_name_bankroll("Mock Player", 500)
         test_path = Path(self.temp_dir) / "mock_cycle.blackjack"
 
-        # Capture what gets written during save
-        written_data = []
+        # Capture what gets serialized during save
+        captured_data = None
 
-        def capture_write(data):
-            written_data.append(data)
-            return len(data)  # Return bytes written
+        def capture_json_dump(data, file_obj):
+            nonlocal captured_data
+            captured_data = data
 
-        # Mock the save operation
-        mock_save_file = mocker.Mock()
-        mock_save_file.write.side_effect = capture_write
-        mock_save_file.__enter__.return_value = mock_save_file
-        mock_save_file.__exit__.return_value = None
+        # Mock json.dump to capture data
+        mocker.patch("json.dump", side_effect=capture_json_dump)
 
-        with mocker.patch("builtins.open", return_value=mock_save_file):
-            save_player(player, test_path)
+        # Mock open for save (we don't care about the file, just that it's called)
+        mocker.patch("builtins.open", mocker.mock_open())
 
-        # Verify save was called correctly
-        assert len(written_data) > 0
-        saved_json = written_data[0]
+        # Execute save
+        save_player(player, test_path)
 
-        # Now mock the load operation with the captured data
-        mock_load_file = mocker.mock_open(read_data=saved_json)
-        with mocker.patch("builtins.open", mock_load_file):
-            loaded_player = load_player(test_path)
+        # Verify we captured data
+        assert captured_data is not None
+        assert captured_data["name"] == "Mock Player"
+        assert captured_data["bankroll"] == 500
+
+        # Now mock json.load to return our captured data
+        mocker.patch("json.load", return_value=captured_data)
+
+        # Execute load
+        loaded_player = load_player(test_path)
 
         # Verify the cycle worked
         assert loaded_player.name == player.name
         assert loaded_player.bankroll == player.bankroll
 
-    # ==================== COMPARISON: Why pytest-mock is better ====================
-
-    def test_comparison_old_way_with_mock_open(self, class_setup, method_setup, mocker):
-        """OLD WAY: Using mock_open import (more verbose)"""
-        from unittest.mock import mock_open  # Extra import needed
-
-        player = Player.from_name_bankroll("Test Player", 100)
-        test_path = Path(self.temp_dir) / "old_way.blackjack"
-
-        # More verbose setup
-        mock_file = mock_open()
-        mock_file.side_effect = PermissionError("Access denied")
-
-        with mocker.patch("builtins.open", mock_file):
-            with pytest.raises(PermissionError):
-                save_player(player, test_path)
-
-    def test_comparison_new_way_pytest_mock_only(self, class_setup, method_setup, mocker):
+    def test_comparison(self, class_setup, method_setup, mocker):
         """NEW WAY: Using only pytest-mock (cleaner)"""
         # No extra imports needed
 

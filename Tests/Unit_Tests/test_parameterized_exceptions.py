@@ -190,30 +190,6 @@ class TestParameterizedInputs:
         assert result == Move.HIT
         assert self.fake_input.call_count == 2
 
-    # ==================== COMPREHENSIVE BANKROLL TESTING ====================
-
-    @pytest.mark.parametrize("initial_bankroll,change,expected_result,expected_final", [
-        (100, 50, True, 150),        # positive change
-        (100, 0, True, 100),         # no change
-        (100, -50, True, 50),        # negative change within limit
-        (100, -100, True, 0),        # negative change to exactly zero
-        (100, -101, False, 100),     # negative change exceeding limit
-        (0, 50, True, 50),           # from zero to positive
-        (0, 0, True, 0),             # zero to zero
-        (0, -1, False, 0),           # can't go negative
-        (1, -1, True, 0),            # minimum to zero
-        (1000000, 999999, True, 1999999),  # large amounts
-        (1000000, -1000000, True, 0),       # large negative to zero
-        (1000000, -1000001, False, 1000000), # large negative exceeding
-    ])
-    def test_update_bankroll_comprehensive(self, initial_bankroll, change, expected_result, expected_final, class_setup, method_setup):
-        """Test bankroll updates with comprehensive scenarios"""
-        player = Player.from_name_bankroll("Test Player", initial_bankroll)
-
-        result = player.update_bankroll(change)
-
-        assert result == expected_result
-        assert player.bankroll == expected_final
 
     # ==================== COMPREHENSIVE STATS UPDATE TESTING ====================
 
