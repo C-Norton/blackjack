@@ -136,27 +136,27 @@ class TestPlayerEdgeCases:
     def test_update_bankroll_exactly_zero_result(self, class_setup, method_setup):
         """Test bankroll update with exactly zero change"""
         initial_bankroll = self.player.bankroll
-        assert self.player.update_bankroll(0)
+        self.player.bankroll += 0
         assert self.player.bankroll == initial_bankroll
 
     def test_update_bankroll_negative_exactly_bankroll(self, class_setup, method_setup):
         """Test bankroll update that would reduce to exactly zero"""
-        assert self.player.update_bankroll(-100)
+        self.player.bankroll -= 100
         assert self.player.bankroll == 0
 
     def test_update_bankroll_negative_exceeds_bankroll_by_one(self, class_setup, method_setup):
         """Test bankroll update that exceeds bankroll by exactly one"""
-        assert not self.player.update_bankroll(-101)
+        assert not self.player.bankroll -101
         assert self.player.bankroll == 100  # Should remain unchanged
 
     def test_update_bankroll_very_large_positive(self, class_setup, method_setup):
         """Test bankroll update with very large positive amount"""
-        assert self.player.update_bankroll(999999)
+        self.player.bankroll += 999999
         assert self.player.bankroll == 1000099
 
     def test_bankroll_setter_negative_raises_error(self, class_setup, method_setup):
         """Test that setting negative bankroll raises ValueError"""
-        with pytest.raises(ValueError):
+        with pytest.raises(OutOfMoneyException):
             self.player.bankroll = -1
 
     def test_bankroll_setter_zero_is_valid(self, class_setup, method_setup):

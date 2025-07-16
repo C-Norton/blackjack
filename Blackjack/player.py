@@ -51,7 +51,7 @@ class Player(GameParticipant):
     def bankroll(self, new_amount: int) -> None:
         """Set the bankroll amount directly in the stats dictionary."""
         if new_amount < 0:
-            raise ValueError(f"Bankroll cannot be negative. Attempted to set: {new_amount}")
+            raise OutOfMoneyException(f"Bankroll cannot be negative. Attempted to set: {new_amount}")
 
         self.stats["bankroll"] = new_amount
 

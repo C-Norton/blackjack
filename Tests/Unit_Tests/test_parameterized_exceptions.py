@@ -346,13 +346,13 @@ class TestExceptionHandling:
 
         # Try invalid bankroll update
         try:
-            player.update_bankroll(-200)  # Should fail but not crash
+            player.bankroll -=200  # Should fail but not crash
         except:
             pass
 
         # Player should still be functional
         assert player.bankroll == 100
-        assert player.update_bankroll(50)
+        player.bankroll += 50
         assert player.bankroll == 150
 
     def test_file_corruption_recovery(self, class_setup, method_setup):
@@ -389,7 +389,7 @@ class TestExceptionHandling:
         # Generate many exceptions rapidly
         for i in range(100):
             try:
-                player.update_bankroll(-1000)  # Should fail every time
+                player.bankroll -= 1000  # Should fail every time
             except:
                 pass
 
@@ -400,7 +400,7 @@ class TestExceptionHandling:
 
         # Player should still be functional
         assert player.bankroll == 100
-        assert player.update_bankroll(50)
+        player.bankroll += 50
         assert player.bankroll == 150
 
     def test_nested_exception_scenarios(self, class_setup, method_setup, mocker):

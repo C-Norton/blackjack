@@ -44,15 +44,13 @@ class TestPlayer:
 
 
     def test_update_bankroll(self, class_setup, method_setup):
-        assert self.player.update_bankroll(100)
+        self.player.bankroll += 100
         assert self.player.bankroll == 200
 
     def test_negative_bankroll_update(self, class_setup, method_setup):
-        assert self.player.update_bankroll(-100)
+        self.player.bankroll -=100
         assert self.player.bankroll == 0
 
-    def test_invalid_bankroll_update(self, class_setup, method_setup):
-        assert not self.player.update_bankroll(-101)
 
     def test_update_stats_victory(self, class_setup, method_setup):
         self.player.update_stats((Result.VICTORY, 100))
