@@ -268,21 +268,6 @@ class TestExceptionHandling:
         with pytest.raises(KeyError):
             _ = player.bankroll
 
-    def test_type_error_on_invalid_operations(self, class_setup, method_setup):
-        """Test TypeError from invalid operations"""
-        # Create player with string bankroll
-        invalid_stats = {
-            "name": "Invalid Player",
-            "bankroll": "not_a_number",
-            "wins": 0,
-            "losses": 0,
-            "pushes": 0
-        }
-        player = Player(invalid_stats)
-
-        # Should raise TypeError when trying arithmetic
-        with pytest.raises(TypeError):
-            player.update_bankroll(100)  # Can't add int to string
 
     def test_json_decode_error_scenarios(self, class_setup, method_setup):
         """Test JSON decode errors in file operations"""

@@ -4,10 +4,8 @@ Game handles the flow of play
 
 import collections
 import random
-from random import betavariate
 from typing import Optional
 
-from Blackjack.result import Result
 from .card import Card
 from .dealer import Dealer
 from .hand import Hand

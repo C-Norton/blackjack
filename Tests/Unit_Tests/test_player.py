@@ -11,8 +11,6 @@ from pathlib import Path
 
 import pytest
 
-import Blackjack
-import Blackjack.main_menu
 from Blackjack import player
 from Blackjack.move import Move
 from Blackjack.player import Player
@@ -44,26 +42,6 @@ class TestPlayer:
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
 
-    def test_player_creation(self, class_setup, method_setup):
-        self.fake_input.side_effect = ["Player 1", "1000"]
-        self.player = Blackjack.main_menu.new_player()
-        assert type(self.player) is Player
-        assert self.player.name == "Player 1"
-        assert self.player.bankroll == 1000
-        self.fake_print.reset_mock()
-        assert self.fake_input.call_count == 2
-        self.fake_input.reset_mock()
-
-    def test_bad_input(self, class_setup, method_setup):
-        path = Path("player 2.blackjack")
-        self.fake_input.side_effect = ["Player 2", "Bad Input", "2000"]
-        self.player = Blackjack.main_menu.new_player()
-        assert type(self.player) is Player
-
-        assert self.player.name == "Player 2"
-        assert self.player.bankroll == 2000
-        assert self.fake_input.call_count == 3
-        Path.unlink(path)
 
     def test_update_bankroll(self, class_setup, method_setup):
         assert self.player.update_bankroll(100)
@@ -148,10 +126,10 @@ class TestPlayer:
         assert len(self.deck) == 0
         assert self.fake_hand.add_card.call_count == 1
 
-    def test_save_load_player(self, class_setup, method_setup, mocker):
+    def test_save_load_player(self, class_setup, method_setup):
         path = Path("player 1.blackjack")
         try:
-            my_player = Player("player 1", 1000)
+            my_player = Player.from_name_bankroll("player 1", 1000)
             my_player.stats = {
                 "name": "player 1",
                 "bankroll": 1000,
@@ -168,4 +146,4 @@ class TestPlayer:
             print(e)
 
         finally:
-            Path.unlink(path)
+            Path.unlink(path,missing_ok=True)

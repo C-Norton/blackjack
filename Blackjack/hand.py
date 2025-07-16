@@ -59,10 +59,8 @@ class Hand:
             return subtotal + aces
 
     def __str__(self):
-        output = ""
-        for card in self.cards:
-            output += str(card) + "\n"
-        return output.strip("\n")
+        return '\n'.join(str(card) for card in self.cards)
+
 
     def __getitem__(self, index):
         return self.cards[index]

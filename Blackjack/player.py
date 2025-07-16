@@ -12,13 +12,16 @@ import json
 from pathlib import Path
 from typing import Optional
 
+from .card import Card
+from .game_participant import GameParticipant
 from .hand import Hand
 from .move import Move
 from .result import Result
-from .game_participant import GameParticipant
+
 
 class OutOfMoneyException(Exception):
     def __init__(self, message: str):
+        print(message)
         print("The house always wins!")
 
 
@@ -26,48 +29,37 @@ class Player(GameParticipant):
     def __init__(self, stats: dict):
         super().__init__()
         self.name: str = stats["name"]
-        self.bankroll: int = stats["bankroll"]
         self.stats: dict = stats
         self.bet: int = 0
         self.hand: Optional[Hand] = None
 
     @classmethod
     def from_name_bankroll(cls, name: str, bankroll: int):
-        return Player(
-            {
-                "name": name,
-                "bankroll": bankroll,
-                "wins": 0,
-                "losses": 0,
-                "pushes": 0,
-            }
-        )
+        return Player({"name": name, "bankroll": bankroll, "wins": 0, "losses": 0, "pushes": 0, })
 
-    def deal_card(self, card):
+    def deal_card(self, card: Card):
         self.hand.add_card(card)
 
-    def update_bankroll(self, net_change) -> bool:
-        if net_change >= 0:
-            self.bankroll += net_change
-            self.stats.update({"bankroll": self.bankroll})
-            return True
-        elif net_change < 0 and -1 * net_change <= self.bankroll:
-            self.bankroll += net_change
-            self.stats.update({"bankroll": self.bankroll})
-            return True
-        else:
-            print(
-                f"Error, cannot adjust bankroll by{net_change} as bankroll is equal to {self.bankroll}"
-            )
-            return False
 
-    def update_stats(self, result_tuple) -> bool:
+
+    @property
+    def bankroll(self) -> int:
+        """Get the current bankroll amount from the stats dictionary."""
+        return self.stats["bankroll"]
+
+    @bankroll.setter
+    def bankroll(self, new_amount: int) -> None:
+        """Set the bankroll amount directly in the stats dictionary."""
+        if new_amount < 0:
+            raise ValueError(f"Bankroll cannot be negative. Attempted to set: {new_amount}")
+
+        self.stats["bankroll"] = new_amount
+
+    def update_stats(self, result_tuple: tuple) -> bool:
         if result_tuple[0] == Result.VICTORY:
             if result_tuple[1] > 0:
                 self.stats.update({"wins": self.stats.get("wins") + 1})
-                self.stats.update(
-                    {"bankroll": self.bankroll + result_tuple[1]}
-                )
+                self.bankroll += result_tuple[1]
                 return True
             else:
                 return False
@@ -77,9 +69,7 @@ class Player(GameParticipant):
         else:
             if 0 > result_tuple[1] >= -self.bankroll:
                 self.stats.update({"losses": self.stats.get("losses") + 1})
-                self.stats.update(
-                    {"bankroll": self.bankroll +result_tuple[1]}
-                )
+                self.bankroll += result_tuple[1]
                 return True
             else:
                 return False
@@ -88,15 +78,13 @@ class Player(GameParticipant):
         if self.bankroll == 0:
             # This behavior is not defined by tests. We will leave this edge case alone, as we don't want to be too
             # picky for the students
-            print("You're broke! Please add more money to your bankroll!")
-            raise OutOfMoneyException
+
+            raise OutOfMoneyException("You're broke! Please add more money to your bankroll!")
         bet = None
         while not bet:
             try:
                 print(f"Ante up! Your current bankroll is {self.bankroll}.")
-                bet = int(
-                    input(f"Please enter a number between 1 and {self.bankroll}:\t")
-                )
+                bet = int(input(f"Please enter a number between 1 and {self.bankroll}:\t"))
                 if bet > self.bankroll:
                     bet = None
             except Exception:
@@ -140,9 +128,6 @@ def load_player(path: Path) -> Player:
     return Player(stats)
 
 
-def save_player(
-    player: Player,
-    path: Path,
-):
+def save_player(player: Player, path: Path, ) -> None:
     with open(path, "w") as file:
         json.dump(player.stats, file)
