@@ -73,7 +73,7 @@ class TestGameEdgeCases:
         game_instance = Game(self.fake_player, self.fake_dealer, limited_deck)
 
         with pytest.raises(IndexError):
-            game_instance.deal()
+            game_instance._deal()
 
 
     def test_single_card_deck(self, class_setup, method_setup, generate_fake_card):
@@ -83,7 +83,7 @@ class TestGameEdgeCases:
         game_instance = Game(self.fake_player, self.fake_dealer, single_deck)
 
         with pytest.raises(IndexError):  # Should fail when trying to deal 4 cards
-            game_instance.deal()
+            game_instance._deal()
 
     # ==================== GAME EVALUATION EDGE CASES ====================
 
@@ -95,7 +95,7 @@ class TestGameEdgeCases:
         self.fake_dealer_hand.get_size.return_value = 2
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate() == Result.PUSH
+        assert self.game._evaluate() == Result.PUSH
 
     def test_evaluate_both_bust_edge_case(self, class_setup, method_setup):
         """Test evaluation when both player and dealer bust (player loses)"""
@@ -103,7 +103,7 @@ class TestGameEdgeCases:
         self.fake_dealer_hand.get_total.return_value = 23
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate() == Result.DEFEAT  # Player busts first
+        assert self.game._evaluate() == Result.DEFEAT  # Player busts first
 
     def test_evaluate_player_21_multiple_cards_dealer_blackjack(self, class_setup, method_setup):
         """Test when player has 21 with multiple cards, dealer has blackjack"""
@@ -113,7 +113,7 @@ class TestGameEdgeCases:
         self.fake_dealer_hand.get_size.return_value = 2  # Blackjack
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate() == Result.DEFEAT
+        assert self.game._evaluate() == Result.DEFEAT
 
     def test_evaluate_maximum_possible_totals(self, class_setup, method_setup):
         """Test evaluation with maximum possible hand totals"""
@@ -123,7 +123,7 @@ class TestGameEdgeCases:
         self.fake_dealer_hand.get_size.return_value = 3
         self.game.player.hand = self.fake_player_hand
         self.game.dealer.hand = self.fake_dealer_hand
-        assert self.game.evaluate() == Result.DEFEAT
+        assert self.game._evaluate() == Result.DEFEAT
 
     # ==================== PLAY ROUND EDGE CASES ====================
 
@@ -134,7 +134,7 @@ class TestGameEdgeCases:
         self.fake_player.has_busted.return_value = True
 
         assert self.game._can_player_move
-        result = self.game.play_round()
+        result = self.game._play_round()
         assert not result  # Game should end
         assert not self.game._can_player_move
 
@@ -147,7 +147,7 @@ class TestGameEdgeCases:
         self.fake_player.has_busted.return_value = False
         self.fake_dealer.has_busted.return_value = False
 
-        result = self.game.play_round()
+        result = self.game._play_round()
         assert not result  # Game should end
         assert not self.game._can_player_move
 
@@ -159,17 +159,17 @@ class TestGameEdgeCases:
         self.fake_dealer.has_busted.return_value = False
 
         # First round - hit
-        result1 = self.game.play_round()
+        result1 = self.game._play_round()
         assert result1
         assert self.game._can_player_move
 
         # Second round - hit
-        result2 = self.game.play_round()
+        result2 = self.game._play_round()
         assert result2
         assert self.game._can_player_move
 
         # Third round - stand
-        result3 = self.game.play_round()
+        result3 = self.game._play_round()
         assert not result3
         assert not self.game._can_player_move
 

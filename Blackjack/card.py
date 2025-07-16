@@ -1,6 +1,9 @@
+"""
+Card represents a card in a game of blackjack. It has a suit, and a value. It may be placed face up or face down on the
+table, and may be flipped during play.
+"""
 from .suit import Suit
 from .value import Value
-
 
 class Card:
     def __init__(self, suit: Suit, value: Value):
@@ -18,8 +21,9 @@ class Card:
 
     def __str__(self):
         """
-        __str__ is a method that returns a string representation of the card
-        :return:
+        __str__ is a method that returns a string representation of the card. This should take the format value suitIcon
+        or ## if the card is facedown. For instance J♥ for the jack of hearts
+        :return: String
         """
         if not self.face_down:
             return str(self.value) + str(self.suit)

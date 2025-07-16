@@ -1,5 +1,9 @@
 """
-Game handles the flow of play
+Game handles the flow of play, including running generating decks, running hands, and evaluating win/loss status
+
+The external interface of game should consist of
+Functions: generate_deck
+Class Methods: Game.new_hand: plays a hand
 """
 
 import collections
@@ -51,15 +55,18 @@ class Game:
             dealer = Dealer()
         if deck is None:
             deck = generate_deck()
-        self.deck = deck
-        self.dealer = dealer
-        self.player = player
-        self._can_player_move = True
+        self.deck : collections.deque[Card] = deck
+        self.dealer:Dealer = dealer
+        self.player : player= player
+        self._can_player_move:bool = True
 
-    def deal(self) -> None:
+    def _deal(self) -> None:
         """
         deal prepares the hand for play by dealing 2 cards to the player and 2 to dealer, alternating who gets what card
         it also requests an ante (initial bet) from the player
+
+        Being a private method, this does not have to be implemented by the student, though it's implementation is
+        suggested
         :return: None
         """
         self._can_player_move = True
@@ -73,9 +80,17 @@ class Game:
         self.player.deal_card(self.deck.pop())
         self.dealer.deal_card(self.deck.pop())
 
-    def play_round(self) -> bool:
+    def _play_round(self) -> bool:
         """
-        play round returns a boolean as to if there should be another round
+        _play_round returns a boolean as to if there should be another round
+        Being a private method, this does not have to be implemented by the student, though it's implementation is
+        suggested
+
+        Note that tests exist for this method, as it was made private after the tests were written. Should you choose
+        not to implement this, you can mark these tests using
+        @pytest.mark.skip(reason="not implemented")
+        in pytest to avoid running these irrelevant tests
+
         :return: boolean, true if another round is warranted
         """
         if self._can_player_move:
@@ -107,7 +122,7 @@ class Game:
             player antes
             Deal cards to dealer
             Deal cards to player
-            Until both players have STAND on all hands, or player has busted:
+            Until both players have STAND on all hands, or one player has busted:
                 Accept Player move
                 Accept dealer move
             Dealer reveals hidden card
@@ -116,14 +131,13 @@ class Game:
             Save stats
         :return:
         """
-        self.deal()
+        self._deal()
         print("Dealer's Hand")
         print(str(self.dealer.hand))
         print(f"{self.player.name}'s Hand")
         print(str(self.player.hand))
 
-        while self.play_round():
-            # play round completes via side effects, therefore this loop condition is all we need
+        while self._play_round():
             print("Dealer's Hand")
             print(str(self.dealer.hand))
             print(f"{self.player.name}'s Hand")
@@ -132,7 +146,7 @@ class Game:
         self.dealer.reveal_hand()
         print(f"{self.player.name}'s final hand")
         print(str(self.player.hand))
-        result = self.evaluate()
+        result = self._evaluate()
         print(result.name)
         self.player.hand = None
         self.dealer.hand = None
@@ -145,7 +159,7 @@ class Game:
             net_change = 0
         return result, net_change
 
-    def evaluate(self) -> Result:
+    def _evaluate(self) -> Result:
         """
         Blackjack scoring:
         In order of priority
@@ -154,10 +168,18 @@ class Game:
             If both players have 21, any natural 21 (no hits) wins
             If a tie, the result is a push
             Higher card wins
+
+        Being a private method, this does not have to be implemented by the student, though it's implementation is
+        suggested
+
+        Note that tests exist for this method, as it was made private after the tests were written. Should you choose
+        not to implement this, you can mark these tests using
+        @pytest.mark.skip(reason="not implemented")
+        in pytest to avoid running these irrelevant tests
         :return: a Result enum reflecting the result of the hand
         """
-        player_hand = self.player.hand
-        dealer_hand = self.dealer.hand
+        player_hand:Hand= self.player.hand
+        dealer_hand:Hand= self.dealer.hand
         if player_hand.get_total() > 21:
             return Result.DEFEAT
         elif dealer_hand.get_total() > 21:

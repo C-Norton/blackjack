@@ -1,10 +1,6 @@
 """
 Player represents the IO necessary to collect move information from the player,
 as well as the hand management of the player.
-
-player has 2 fields initialized by the constructor,
-bankroll, which represents the amount of money the player has
-and name, which reflects the player's name.
 """
 
 import collections
@@ -35,9 +31,32 @@ class Player(GameParticipant):
 
     @classmethod
     def from_name_bankroll(cls, name: str, bankroll: int):
+        """
+        Create a new instance of the Player class using a name and bankroll.
+
+        The method initializes a Player instance using the provided `name` and `bankroll`
+        values and sets the default values for `wins`, `losses`, and `pushes` attributes
+        to zero. This method is a convenience class method for easily creating a new
+        Player object with basic attributes.
+
+        Parameters:
+            name: str
+                The name of the player.
+            bankroll: int
+                The initial bankroll amount for the player.
+
+        Returns:
+            Player
+                A new instance of the Player class initialized with the provided
+                attributes.
+        """
         return Player({"name": name, "bankroll": bankroll, "wins": 0, "losses": 0, "pushes": 0, })
 
     def deal_card(self, card: Card):
+        """
+        Deal card gives a card to the player to add to the hand. As the player never flips cards face down, this is a
+        simple one-liner to satisfy the game_participant abstract method
+        """
         self.hand.add_card(card)
 
 
@@ -56,6 +75,22 @@ class Player(GameParticipant):
         self.stats["bankroll"] = new_amount
 
     def update_stats(self, result_tuple: tuple) -> bool:
+        """
+        Updates player statistics and bankroll based on the result of a game round.
+
+        This method processes the result of a game provided in the `result_tuple` and updates the player's
+        win, loss, or push statistics accordingly. Additionally, it adjusts the player's bankroll based
+        on the monetary outcome of the round.
+
+        Parameters:
+            result_tuple (tuple): A tuple containing the result of the game and its monetary outcome.
+                                  The result is specified as an enumeration of type `Result`
+                                  (e.g., Result.VICTORY, Result.PUSH), and the monetary outcome
+                                  is a numeric value representing the gain or loss.
+
+        Returns:
+            bool: True if the stats and bankroll were successfully updated, False otherwise.
+        """
         if result_tuple[0] == Result.VICTORY:
             if result_tuple[1] > 0:
                 self.stats.update({"wins": self.stats.get("wins") + 1})
@@ -74,10 +109,24 @@ class Player(GameParticipant):
             else:
                 return False
 
-    def ante(self) -> int:
+    def ante(self) -> None:
+        """
+        Handles the ante process where the player must place a bet at the beginning of a game round.
+
+        Summary:
+        This function asks the player to place a bet (ante) and ensures that the bet is a valid
+        integer within the player's available bankroll. If the bankroll is zero, an exception
+        is raised. The betting process continues until the player inputs a valid value.
+
+        Raises:
+            OutOfMoneyException: Raised if the player's bankroll is zero when the function is called.
+
+        Attributes:
+            bet (int): Represents the amount the player wagers during the ante process. Must be
+            set only after valid input from the player.
+
+        """
         if self.bankroll == 0:
-            # This behavior is not defined by tests. We will leave this edge case alone, as we don't want to be too
-            # picky for the students
 
             raise OutOfMoneyException("You're broke! Please add more money to your bankroll!")
         bet = None
@@ -92,6 +141,17 @@ class Player(GameParticipant):
         self.bet = bet
 
     def double_down(self) -> bool:
+        """
+        Doubles the current bet if there are sufficient funds in the bankroll. The player will recieve exactly one
+        additional card from the game.
+
+        This method checks if the bet can be doubled without exceeding half of the bankroll,
+        and if so, doubles the bet and returns True. Otherwise, it does not modify the bet
+        and returns False.
+
+        Returns:
+            bool: True if the bet was successfully doubled, otherwise False.
+        """
         if self.bet <= self.bankroll / 2:
             self.bet *= 2
             return True
@@ -99,6 +159,24 @@ class Player(GameParticipant):
             return False
 
     def take_turn(self, deck: collections.deque) -> Move:
+        """
+        Prompts the player to take their turn in a card game and processes their chosen move.
+        The player can select one of three moves: 'Hit', 'Stand', or 'Double Down'. Based on
+        their choice, the method updates the state of the player's hand as well as processes
+        the deck accordingly.
+
+        Parameters:
+            deck (collections.deque): The deck of cards used in the game, stored as a deque.
+
+        Returns:
+            Move: An enumeration indicating the move chosen by the player:
+                   - Move.HIT: The player draws a card.
+                   - Move.STAND: The player stands without drawing a card.
+                   - Move.DOUBLE_DOWN: The player doubles their bet and draws one additional card.
+
+        Raises:
+            TypeError: If the deck is not a collections.deque.
+        """
         print("Please take your turn")
         result = None
         while not result:

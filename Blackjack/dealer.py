@@ -9,9 +9,9 @@ The dealer hits on anything below 17.
 
 The dealer's external interface should consist of
 
-take_turn(Deck)
+
 reveal_hand() (flips all cards and prints)
-print_hand()  (prints including face down
+all methods in game_participant.py
 """
 
 import collections
@@ -55,6 +55,9 @@ class Dealer (GameParticipant):
             return Move.STAND
 
     def deal_card(self, card):
+        """
+        deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
+        """
         if self.hand.get_size() == 0:
             card.face_down = True
         self.hand.add_card(card)
