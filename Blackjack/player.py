@@ -210,10 +210,20 @@ class Player(GameParticipant):
         return result
 
     def __eq__(self, other):
+        """
+        eq is a method that returns a boolean that determines if two objects are equal (not the same, equal)
+        :param other: the item to compare against
+        :return: true if equal 
+        """
         return self.stats == other.stats
 
 
 def load_player(path: Path) -> Player:
+    """
+    Load player is a module function that loads a player from a stats file. Note that hand is not created
+    :param path: The path object representing the file to load from
+    :return: a player object
+    """
     with open(path, "r") as file:
         stats = json.load(file)
     return Player(stats)
@@ -223,5 +233,10 @@ def save_player(
     player: Player,
     path: Path,
 ) -> None:
+    """
+    Save player is a module function that saves a player to a stats file. Note that hand is not saved.
+    :param player: The player to save
+    :param path: The filepath to save to
+    """
     with open(path, "w") as file:
         json.dump(player.stats, file)
