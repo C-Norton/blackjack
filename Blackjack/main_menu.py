@@ -18,7 +18,7 @@ from Blackjack.game import Game
 from Blackjack.player import Player, load_player, save_player
 
 
-def main_menu():
+def main_menu() -> None:
     """
     Option 1: Play new game, select player
     Option 2: Make a New Player
@@ -53,7 +53,11 @@ def main_menu():
                 print("Please enter a value between 1 and 3.")
 
 
-def new_hand():
+def new_hand() -> None:
+    """
+    New hand runs a game of blackjack, and saves the players stats back to the player file
+    :return: None
+    """
     playername = input("What player will be playing?")
     path = Path(f"{playername.lower()}.blackjack")
     player = load_player(path)
@@ -62,7 +66,7 @@ def new_hand():
     save_player(player, path)
 
 
-def new_player():
+def new_player() -> None:
     """
     new_player creates a new player. It handles the menu operations
     :return: the new player object
@@ -80,7 +84,11 @@ def new_player():
     return player
 
 
-def show_stats():
+def show_stats() -> None:
+    """
+    show stats shows the stats of an existing player based off playername
+    :return: None
+    """
     name = input("What player would you like to see stats for? ")
     player = load_player(Path(f"{name.lower()}.blackjack"))
     print(player.stats)
