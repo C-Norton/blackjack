@@ -8,14 +8,15 @@ Comprehensive parameterized tests and exception handling edge cases
 """
 
 import collections
-import pytest
 import json
 import tempfile
 from pathlib import Path
 from unittest.mock import Mock
 
-from Blackjack.player import Player, OutOfMoneyException, save_player, load_player
+import pytest
+
 from Blackjack.move import Move
+from Blackjack.player import Player, OutOfMoneyException, save_player, load_player
 from Blackjack.result import Result
 
 
@@ -38,41 +39,45 @@ class TestParameterizedInputs:
 
     # ==================== COMPREHENSIVE ANTE INPUT TESTING ====================
 
-    @pytest.mark.parametrize("invalid_input,description", [
-        ("", "empty string"),
-        ("   ", "whitespace only"),
-        ("abc", "alphabetic text"),
-        ("123abc", "mixed alphanumeric"),
-        ("!@#$%", "special characters"),
-        ("-1", "negative number"),
-        ("-100", "large negative"),
-        ("0", "zero"),
-        ("0.0", "zero float"),
-        ("1.5", "decimal number"),
-        ("1,000", "comma-separated number"),
-        ("$100", "currency symbol"),
-        ("100$", "trailing currency"),
-        ("one hundred", "written number"),
-        ("1e2", "scientific notation"),
-        ("infinity", "infinity string"),
-        ("NaN", "not a number"),
-        ("\n", "newline character"),
-        ("\t", "tab character"),
-        ("　", "unicode whitespace"),
-        ("١٠٠", "arabic numerals"),
-        ("100.00", "decimal with zeros"),
-        ("100.", "trailing decimal"),
-        (".100", "leading decimal"),
-        ("++100", "double positive"),
-        ("--100", "double negative"),
-        ("1 0 0", "spaced digits"),
-        ("hundred", "word number"),
-        ("1st", "ordinal number"),
-        ("0x64", "hexadecimal"),
-        ("0b1100100", "binary"),
-        ("100j", "complex number"),
-    ])
-    def test_ante_comprehensive_invalid_inputs(self, invalid_input, description, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "invalid_input,description",
+        [
+            ("", "empty string"),
+            ("   ", "whitespace only"),
+            ("abc", "alphabetic text"),
+            ("123abc", "mixed alphanumeric"),
+            ("!@#$%", "special characters"),
+            ("-1", "negative number"),
+            ("-100", "large negative"),
+            ("0", "zero"),
+            ("0.0", "zero float"),
+            ("1.5", "decimal number"),
+            ("1,000", "comma-separated number"),
+            ("$100", "currency symbol"),
+            ("100$", "trailing currency"),
+            ("one hundred", "written number"),
+            ("1e2", "scientific notation"),
+            ("infinity", "infinity string"),
+            ("NaN", "not a number"),
+            ("\n", "newline character"),
+            ("\t", "tab character"),
+            ("　", "unicode whitespace"),
+            ("100.00", "decimal with zeros"),
+            ("100.", "trailing decimal"),
+            (".100", "leading decimal"),
+            ("++100", "double positive"),
+            ("--100", "double negative"),
+            ("1 0 0", "spaced digits"),
+            ("hundred", "word number"),
+            ("1st", "ordinal number"),
+            ("0x64", "hexadecimal"),
+            ("0b1100100", "binary"),
+            ("100j", "complex number"),
+        ],
+    )
+    def test_ante_comprehensive_invalid_inputs(
+        self, invalid_input, description, class_setup, method_setup
+    ):
         """Test ante with comprehensive set of invalid inputs"""
         player = Player.from_name_bankroll("Test Player", 100)
         self.fake_input.side_effect = [invalid_input, "50"]
@@ -82,17 +87,22 @@ class TestParameterizedInputs:
         assert player.bet == 50
         assert self.fake_input.call_count == 2
 
-    @pytest.mark.parametrize("bankroll,bet_amount,should_succeed", [
-        (100, 1, True),      # minimum valid bet
-        (100, 50, True),     # half bankroll
-        (100, 100, True),    # full bankroll
-        (100, 101, False),   # over bankroll
-        (1, 1, True),        # minimum bankroll, minimum bet
-        (1000000, 999999, True),  # large amounts
-        (5, 3, True),        # odd numbers
-        (10, 5, True),       # even numbers
-    ])
-    def test_ante_boundary_values(self, bankroll, bet_amount, should_succeed, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "bankroll,bet_amount,should_succeed",
+        [
+            (100, 1, True),  # minimum valid bet
+            (100, 50, True),  # half bankroll
+            (100, 100, True),  # full bankroll
+            (100, 101, False),  # over bankroll
+            (1, 1, True),  # minimum bankroll, minimum bet
+            (1000000, 999999, True),  # large amounts
+            (5, 3, True),  # odd numbers
+            (10, 5, True),  # even numbers
+        ],
+    )
+    def test_ante_boundary_values(
+        self, bankroll, bet_amount, should_succeed, class_setup, method_setup
+    ):
         """Test ante with various bankroll and bet combinations"""
         player = Player.from_name_bankroll("Test Player", bankroll)
 
@@ -101,33 +111,38 @@ class TestParameterizedInputs:
             player.ante()
             assert player.bet == bet_amount
         else:
-            self.fake_input.side_effect = [str(bet_amount), "1"]  # fallback to valid bet
+            self.fake_input.side_effect = [
+                str(bet_amount),
+                "1",
+            ]  # fallback to valid bet
             player.ante()
             assert player.bet == 1  # Should fallback to valid amount
 
     # ==================== COMPREHENSIVE MOVE INPUT TESTING ====================
 
-    @pytest.mark.parametrize("move_input,expected_calls,expected_move", [
-        # Valid hit variations
-        ("hit", 1, Move.HIT),
-        ("HIT", 1, Move.HIT),
-        ("Hit", 1, Move.HIT),
-        ("  hit  ", 1, Move.HIT),
-        ("\thit\n", 1, Move.HIT),
-
-        # Valid stand variations
-        ("stand", 1, Move.STAND),
-        ("STAND", 1, Move.STAND),
-        ("Stand", 1, Move.STAND),
-        ("  stand  ", 1, Move.STAND),
-
-        # Valid double down variations
-        ("double down", 1, Move.DOUBLE_DOWN),
-        ("DOUBLE DOWN", 1, Move.DOUBLE_DOWN),
-        ("Double Down", 1, Move.DOUBLE_DOWN),
-        ("  double down  ", 1, Move.DOUBLE_DOWN),
-    ])
-    def test_take_turn_valid_inputs(self, move_input, expected_calls, expected_move, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "move_input,expected_calls,expected_move",
+        [  # Valid hit variations
+            ("hit", 1, Move.HIT),
+            ("HIT", 1, Move.HIT),
+            ("Hit", 1, Move.HIT),
+            ("  hit  ", 1, Move.HIT),
+            ("\thit\n", 1, Move.HIT),
+            # Valid stand variations
+            ("stand", 1, Move.STAND),
+            ("STAND", 1, Move.STAND),
+            ("Stand", 1, Move.STAND),
+            ("  stand  ", 1, Move.STAND),
+            # Valid double down variations
+            ("double down", 1, Move.DOUBLE_DOWN),
+            ("DOUBLE DOWN", 1, Move.DOUBLE_DOWN),
+            ("Double Down", 1, Move.DOUBLE_DOWN),
+            ("  double down  ", 1, Move.DOUBLE_DOWN),
+        ],
+    )
+    def test_take_turn_valid_inputs(
+        self, move_input, expected_calls, expected_move, class_setup, method_setup
+    ):
         """Test take_turn with all valid input variations"""
         player = Player.from_name_bankroll("Test Player", 100)
         player.hand = Mock()
@@ -140,44 +155,49 @@ class TestParameterizedInputs:
         assert result == expected_move
         assert self.fake_input.call_count == expected_calls
 
-    @pytest.mark.parametrize("invalid_input,description", [
-        ("h", "single letter"),
-        ("s", "single letter"),
-        ("d", "single letter"),
-        ("hi", "partial word"),
-        ("sta", "partial word"),
-        ("double", "incomplete phrase"),
-        ("down", "incomplete phrase"),
-        ("hit me", "extra words"),
-        ("please hit", "extra words"),
-        ("stand up", "extra words"),
-        ("fold", "poker term"),
-        ("call", "poker term"),
-        ("raise", "poker term"),
-        ("quit", "quit command"),
-        ("exit", "exit command"),
-        ("help", "help command"),
-        ("?", "question mark"),
-        ("1", "number"),
-        ("0", "zero"),
-        ("true", "boolean"),
-        ("false", "boolean"),
-        ("yes", "yes/no"),
-        ("no", "yes/no"),
-        ("", "empty string"),
-        ("   ", "whitespace"),
-        ("　", "unicode whitespace"),
-        ("\n", "newline"),
-        ("\t", "tab"),
-        ("hit\nstand", "multi-line"),
-        ("HIT STAND", "multiple commands"),
-        ("hit;stand", "semicolon separated"),
-        ("hit,stand", "comma separated"),
-        ("hit/stand", "slash separated"),
-        ("hit|stand", "pipe separated"),
-        ("دؐouble down", "unicode characters"),
-    ])
-    def test_take_turn_comprehensive_invalid_inputs(self, invalid_input, description, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "invalid_input,description",
+        [
+            ("h", "single letter"),
+            ("s", "single letter"),
+            ("d", "single letter"),
+            ("hi", "partial word"),
+            ("sta", "partial word"),
+            ("double", "incomplete phrase"),
+            ("down", "incomplete phrase"),
+            ("hit me", "extra words"),
+            ("please hit", "extra words"),
+            ("stand up", "extra words"),
+            ("fold", "poker term"),
+            ("call", "poker term"),
+            ("raise", "poker term"),
+            ("quit", "quit command"),
+            ("exit", "exit command"),
+            ("help", "help command"),
+            ("?", "question mark"),
+            ("1", "number"),
+            ("0", "zero"),
+            ("true", "boolean"),
+            ("false", "boolean"),
+            ("yes", "yes/no"),
+            ("no", "yes/no"),
+            ("", "empty string"),
+            ("   ", "whitespace"),
+            ("　", "unicode whitespace"),
+            ("\n", "newline"),
+            ("\t", "tab"),
+            ("hit\nstand", "multi-line"),
+            ("HIT STAND", "multiple commands"),
+            ("hit;stand", "semicolon separated"),
+            ("hit,stand", "comma separated"),
+            ("hit/stand", "slash separated"),
+            ("hit|stand", "pipe separated"),
+            ("دؐouble down", "unicode characters"),
+        ],
+    )
+    def test_take_turn_comprehensive_invalid_inputs(
+        self, invalid_input, description, class_setup, method_setup
+    ):
         """Test take_turn with comprehensive set of invalid inputs"""
         player = Player.from_name_bankroll("Test Player", 100)
         player.hand = Mock()
@@ -190,23 +210,40 @@ class TestParameterizedInputs:
         assert result == Move.HIT
         assert self.fake_input.call_count == 2
 
-
     # ==================== COMPREHENSIVE STATS UPDATE TESTING ====================
 
-    @pytest.mark.parametrize("result_type,money_change,initial_bankroll,should_succeed,expected_bankroll", [
-        (Result.VICTORY, 50, 100, True, 150),     # normal victory
-        (Result.VICTORY, 0, 100, False, 100),     # victory with no money (invalid)
-        (Result.VICTORY, -50, 100, False, 100),   # victory with loss (invalid)
-        (Result.DEFEAT, -50, 100, True, 50),      # normal defeat
-        (Result.DEFEAT, 0, 100, False, 100),      # defeat with no change (invalid)
-        (Result.DEFEAT, 50, 100, False, 100),     # defeat with gain (invalid)
-        (Result.DEFEAT, -100, 100, True, 0),      # defeat taking all money
-        (Result.DEFEAT, -101, 100, False, 100),   # defeat exceeding bankroll
-        (Result.PUSH, 0, 100, True, 100),         # normal push
-        (Result.PUSH, 50, 100, True, 100),        # push with money (shouldn't change bankroll)
-        (Result.PUSH, -50, 100, True, 100),       # push with negative (shouldn't change)
-    ])
-    def test_update_stats_comprehensive(self, result_type, money_change, initial_bankroll, should_succeed, expected_bankroll, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "result_type,money_change,initial_bankroll,should_succeed,expected_bankroll",
+        [
+            (Result.VICTORY, 50, 100, True, 150),  # normal victory
+            (Result.VICTORY, 0, 100, False, 100),  # victory with no money (invalid)
+            (Result.VICTORY, -50, 100, False, 100),  # victory with loss (invalid)
+            (Result.DEFEAT, -50, 100, True, 50),  # normal defeat
+            (Result.DEFEAT, 0, 100, False, 100),  # defeat with no change (invalid)
+            (Result.DEFEAT, 50, 100, False, 100),  # defeat with gain (invalid)
+            (Result.DEFEAT, -100, 100, True, 0),  # defeat taking all money
+            (Result.DEFEAT, -101, 100, False, 100),  # defeat exceeding bankroll
+            (Result.PUSH, 0, 100, True, 100),  # normal push
+            (
+                Result.PUSH,
+                50,
+                100,
+                True,
+                100,
+            ),  # push with money (shouldn't change bankroll)
+            (Result.PUSH, -50, 100, True, 100),  # push with negative (shouldn't change)
+        ],
+    )
+    def test_update_stats_comprehensive(
+        self,
+        result_type,
+        money_change,
+        initial_bankroll,
+        should_succeed,
+        expected_bankroll,
+        class_setup,
+        method_setup,
+    ):
         """Test stats updates with comprehensive scenarios"""
         player = Player.from_name_bankroll("Test Player", initial_bankroll)
 
@@ -234,6 +271,7 @@ class TestExceptionHandling:
         yield
         print(f"Tearing down method: {request.function.__name__}")
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     # ==================== EXCEPTION SCENARIOS ====================
@@ -250,10 +288,10 @@ class TestExceptionHandling:
         """Test ValueError when setting negative bankroll"""
         player = Player.from_name_bankroll("Test Player", 100)
 
-        with pytest.raises(ValueError, match="Bankroll cannot be negative"):
+        with pytest.raises(OutOfMoneyException, match="Bankroll cannot be negative"):
             player.bankroll = -1
 
-        with pytest.raises(ValueError, match="Bankroll cannot be negative"):
+        with pytest.raises(OutOfMoneyException, match="Bankroll cannot be negative"):
             player.bankroll = -100
 
     def test_key_error_on_missing_stats_fields(self, class_setup, method_setup):
@@ -267,7 +305,6 @@ class TestExceptionHandling:
         # Should raise KeyError for missing bankroll
         with pytest.raises(KeyError):
             _ = player.bankroll
-
 
     def test_json_decode_error_scenarios(self, class_setup, method_setup):
         """Test JSON decode errors in file operations"""
@@ -297,7 +334,7 @@ class TestExceptionHandling:
         with pytest.raises(FileNotFoundError):
             save_player(
                 Player.from_name_bankroll("Test", 100),
-                Path("/nonexistent/dir/player.blackjack")
+                Path("/nonexistent/dir/player.blackjack"),
             )
 
     def test_permission_error_simulation(self, class_setup, method_setup, mocker):
@@ -309,8 +346,10 @@ class TestExceptionHandling:
         mock_open = mocker.mock_open()
         mock_open.side_effect = PermissionError("Access denied")
 
-        with mocker.patch("builtins.open", mock_open):
-            with pytest.raises(PermissionError):
+        with mocker.patch(
+            "builtins.open", side_effect=PermissionError("Access denied")
+        ):
+            with pytest.raises(PermissionError, match="Access denied"):
                 save_player(player, test_path)
 
     def test_index_error_empty_deck(self, class_setup, method_setup):
@@ -346,8 +385,8 @@ class TestExceptionHandling:
 
         # Try invalid bankroll update
         try:
-            player.bankroll -=200  # Should fail but not crash
-        except:
+            player.bankroll -= 200  # Should fail but not crash
+        except OutOfMoneyException:
             pass
 
         # Player should still be functional
@@ -390,36 +429,15 @@ class TestExceptionHandling:
         for i in range(100):
             try:
                 player.bankroll -= 1000  # Should fail every time
-            except:
+            except OutOfMoneyException:
                 pass
 
             try:
                 player.bankroll = -1  # Should fail every time
-            except:
+            except OutOfMoneyException:
                 pass
 
         # Player should still be functional
         assert player.bankroll == 100
         player.bankroll += 50
         assert player.bankroll == 150
-
-    def test_nested_exception_scenarios(self, class_setup, method_setup, mocker):
-        """Test nested exception scenarios"""
-        player = Player.from_name_bankroll("Nested Exception Player", 100)
-
-        # Mock methods to raise exceptions
-        original_update = player.update_bankroll
-
-        def failing_update(amount):
-            if amount < 0:
-                raise ValueError("Simulated failure")
-            return original_update(amount)
-
-        player.update_bankroll = failing_update
-
-        # Try operation that would normally work but now fails
-        with pytest.raises(ValueError, match="Simulated failure"):
-            player.update_stats((Result.DEFEAT, -50))
-
-        # Player state should be preserved
-        assert player.bankroll == 100

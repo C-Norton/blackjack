@@ -12,7 +12,6 @@ import pytest
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import mock_open
 
 from Blackjack.game import Game, generate_deck
 from Blackjack.player import Player, load_player, save_player
@@ -65,16 +64,11 @@ class TestGameEdgeCases:
     def test_empty_deck_during_deal(self, class_setup, method_setup, mocker):
         """Test behavior when deck runs out during deal"""
         # Create a deck with only 3 cards (need 4 for dealing)
-        limited_deck = collections.deque([
-            mocker.Mock(),
-            mocker.Mock(),
-            mocker.Mock()
-        ])
+        limited_deck = collections.deque([mocker.Mock(), mocker.Mock(), mocker.Mock()])
         game_instance = Game(self.fake_player, self.fake_dealer, limited_deck)
 
         with pytest.raises(IndexError):
             game_instance._deal()
-
 
     def test_single_card_deck(self, class_setup, method_setup, generate_fake_card):
         """Test game behavior with minimal deck"""
@@ -105,7 +99,9 @@ class TestGameEdgeCases:
         self.game.dealer.hand = self.fake_dealer_hand
         assert self.game._evaluate() == Result.DEFEAT  # Player busts first
 
-    def test_evaluate_player_21_multiple_cards_dealer_blackjack(self, class_setup, method_setup):
+    def test_evaluate_player_21_multiple_cards_dealer_blackjack(
+        self, class_setup, method_setup
+    ):
         """Test when player has 21 with multiple cards, dealer has blackjack"""
         self.fake_player_hand.get_total.return_value = 21
         self.fake_dealer_hand.get_total.return_value = 21
@@ -175,14 +171,16 @@ class TestGameEdgeCases:
 
     # ==================== NEW HAND INTEGRATION EDGE CASES ====================
 
-    def test_new_hand_player_immediate_blackjack(self, class_setup, method_setup, generate_fake_card):
+    def test_new_hand_player_immediate_blackjack(
+        self, class_setup, method_setup, generate_fake_card
+    ):
         """Test new hand when player gets immediate blackjack"""
         # Set up deck for blackjack scenario
         fake_cards = [
-            generate_fake_card(Suit.SPADES, Value.ACE),   # Player card 1
-            generate_fake_card(Suit.HEARTS, Value.SEVEN), # Dealer card 1
-            generate_fake_card(Suit.CLUBS, Value.KING),   # Player card 2
-            generate_fake_card(Suit.DIAMONDS, Value.EIGHT) # Dealer card 2
+            generate_fake_card(Suit.SPADES, Value.ACE),  # Player card 1
+            generate_fake_card(Suit.HEARTS, Value.SEVEN),  # Dealer card 1
+            generate_fake_card(Suit.CLUBS, Value.KING),  # Player card 2
+            generate_fake_card(Suit.DIAMONDS, Value.EIGHT),  # Dealer card 2
         ]
 
         for fake_card in reversed(fake_cards):
@@ -203,13 +201,15 @@ class TestGameEdgeCases:
         assert result == Result.VICTORY
         assert net_change == 50
 
-    def test_new_hand_dealer_immediate_blackjack(self, class_setup, method_setup, generate_fake_card):
+    def test_new_hand_dealer_immediate_blackjack(
+        self, class_setup, method_setup, generate_fake_card
+    ):
         """Test new hand when dealer gets immediate blackjack"""
         fake_cards = [
             generate_fake_card(Suit.SPADES, Value.FIVE),  # Player card 1
-            generate_fake_card(Suit.HEARTS, Value.ACE),   # Dealer card 1
-            generate_fake_card(Suit.CLUBS, Value.SIX),    # Player card 2
-            generate_fake_card(Suit.DIAMONDS, Value.KING) # Dealer card 2
+            generate_fake_card(Suit.HEARTS, Value.ACE),  # Dealer card 1
+            generate_fake_card(Suit.CLUBS, Value.SIX),  # Player card 2
+            generate_fake_card(Suit.DIAMONDS, Value.KING),  # Dealer card 2
         ]
 
         for fake_card in reversed(fake_cards):
@@ -246,6 +246,7 @@ class TestFileIOEdgeCases:
         print(f"Tearing down method: {request.function.__name__}")
         # Clean up temp files
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     # ==================== FILE I/O EDGE CASES ====================
@@ -267,7 +268,7 @@ class TestFileIOEdgeCases:
             "wins": 5,
             "losses": 3,
             "pushes": 2,
-            "special_field": "unicode: 你好"
+            "special_field": "unicode: 你好",
         }
         player = Player(special_stats)
         file_path = Path(self.temp_dir) / "special_player.blackjack"
@@ -326,7 +327,7 @@ class TestFileIOEdgeCases:
             "bankroll": "not_a_number",  # Should be int
             "wins": -1,  # Questionable but technically valid
             "losses": 3.5,  # Should be int
-            "pushes": None  # Should be int
+            "pushes": None,  # Should be int
         }
         with open(file_path, "w") as f:
             json.dump(invalid_stats, f)
@@ -367,11 +368,10 @@ class TestFileIOEdgeCases:
         player = Player.from_name_bankroll("Test Player", 100)
         file_path = Path(self.temp_dir) / "concurrent.blackjack"
 
-        # Mock file operations to simulate permission error
-        mock_file = mock_open()
-        mock_file.side_effect = PermissionError("File is locked by another process")
-
-        with mocker.patch("builtins.open", mock_file):
+        with mocker.patch(
+            "builtins.open",
+            side_effect=PermissionError("File is locked by another process"),
+        ):
             with pytest.raises(PermissionError):
                 save_player(player, file_path)
 
@@ -389,7 +389,7 @@ class TestFileIOEdgeCases:
             "bankroll": 0,
             "wins": 0,
             "losses": 0,
-            "pushes": 0
+            "pushes": 0,
         }
         player = Player(zero_stats)
         file_path = Path(self.temp_dir) / "zero_player.blackjack"

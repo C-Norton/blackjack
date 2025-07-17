@@ -8,10 +8,11 @@ Edge case and bad input tests for player.py module
 """
 
 import collections
+
 import pytest
 
-from Blackjack.player import Player, OutOfMoneyException
 from Blackjack.move import Move
+from Blackjack.player import Player, OutOfMoneyException
 from Blackjack.result import Result
 from Blackjack.suit import Suit
 from Blackjack.value import Value
@@ -39,11 +40,29 @@ class TestPlayerEdgeCases:
 
     # ==================== ANTE EDGE CASES ====================
 
-    @pytest.mark.parametrize("invalid_input", [
-        "", "abc", "-5", "0", "999999", "1.5", " ", "hit me", "!@#",
-        "one hundred", "\n", "\t", "100.0", "-1", "0.5"
-    ])
-    def test_ante_invalid_inputs_then_valid(self, invalid_input, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "invalid_input",
+        [
+            "",
+            "abc",
+            "-5",
+            "0",
+            "999999",
+            "1.5",
+            " ",
+            "hit me",
+            "!@#",
+            "one hundred",
+            "\n",
+            "\t",
+            "100.0",
+            "-1",
+            "0.5",
+        ],
+    )
+    def test_ante_invalid_inputs_then_valid(
+        self, invalid_input, class_setup, method_setup
+    ):
         """Test that ante handles various invalid inputs before accepting valid input"""
         self.fake_input.side_effect = [invalid_input, "50"]
         self.player.ante()
@@ -84,38 +103,65 @@ class TestPlayerEdgeCases:
 
     # ==================== MOVE INPUT EDGE CASES ====================
 
-    @pytest.mark.parametrize("move_input,expected_move", [
-        ("HIT", Move.HIT),
-        ("hit", Move.HIT),
-        ("Hit", Move.HIT),
-        ("  hit  ", Move.HIT),
-        ("STAND", Move.STAND),
-        ("stand", Move.STAND),
-        ("Stand", Move.STAND),
-        ("  STAND  ", Move.STAND),
-        ("DOUBLE DOWN", Move.DOUBLE_DOWN),
-        ("double down", Move.DOUBLE_DOWN),
-        ("Double Down", Move.DOUBLE_DOWN),
-        ("  double down  ", Move.DOUBLE_DOWN),
-    ])
-    def test_take_turn_input_variations(self, move_input, expected_move, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "move_input,expected_move",
+        [
+            ("HIT", Move.HIT),
+            ("hit", Move.HIT),
+            ("Hit", Move.HIT),
+            ("  hit  ", Move.HIT),
+            ("STAND", Move.STAND),
+            ("stand", Move.STAND),
+            ("Stand", Move.STAND),
+            ("  STAND  ", Move.STAND),
+            ("DOUBLE DOWN", Move.DOUBLE_DOWN),
+            ("double down", Move.DOUBLE_DOWN),
+            ("Double Down", Move.DOUBLE_DOWN),
+            ("  double down  ", Move.DOUBLE_DOWN),
+        ],
+    )
+    def test_take_turn_input_variations(
+        self, move_input, expected_move, class_setup, method_setup
+    ):
         """Test various valid input formats for moves"""
         self.fake_input.return_value = move_input
         result = self.player.take_turn(self.deck)
         assert result == expected_move
 
-    @pytest.mark.parametrize("invalid_input", [
-        "", "xyz", "h", "s", "double", "down", "hit me", "please hit",
-        "1", "0", "quit", "exit", "help", "?", "\n", "\t", "  "
-    ])
-    def test_take_turn_invalid_inputs_then_valid(self, invalid_input, class_setup, method_setup):
+    @pytest.mark.parametrize(
+        "invalid_input",
+        [
+            "",
+            "xyz",
+            "h",
+            "s",
+            "double",
+            "down",
+            "hit me",
+            "please hit",
+            "1",
+            "0",
+            "quit",
+            "exit",
+            "help",
+            "?",
+            "\n",
+            "\t",
+            "  ",
+        ],
+    )
+    def test_take_turn_invalid_inputs_then_valid(
+        self, invalid_input, class_setup, method_setup
+    ):
         """Test take_turn with various invalid inputs followed by valid input"""
         self.fake_input.side_effect = [invalid_input, "hit"]
         result = self.player.take_turn(self.deck)
         assert result == Move.HIT
         assert self.fake_input.call_count == 2
 
-    def test_take_turn_double_down_insufficient_funds_fallback(self, class_setup, method_setup):
+    def test_take_turn_double_down_insufficient_funds_fallback(
+        self, class_setup, method_setup
+    ):
         """Test double down with insufficient funds falls back to asking again"""
         self.player.bet = 75  # More than half of 100 bankroll
         self.fake_input.side_effect = ["double down", "stand"]
@@ -123,7 +169,9 @@ class TestPlayerEdgeCases:
         assert result == Move.STAND
         assert self.player.bet == 75  # Bet should not change
 
-    def test_take_turn_double_down_exactly_half_bankroll(self, class_setup, method_setup):
+    def test_take_turn_double_down_exactly_half_bankroll(
+        self, class_setup, method_setup
+    ):
         """Test double down when bet is exactly half of bankroll"""
         self.player.bet = 50
         self.fake_input.return_value = "double down"
@@ -144,9 +192,12 @@ class TestPlayerEdgeCases:
         self.player.bankroll -= 100
         assert self.player.bankroll == 0
 
-    def test_update_bankroll_negative_exceeds_bankroll_by_one(self, class_setup, method_setup):
+    def test_update_bankroll_negative_exceeds_bankroll_by_one(
+        self, class_setup, method_setup
+    ):
         """Test bankroll update that exceeds bankroll by exactly one"""
-        assert not self.player.bankroll -101
+        with pytest.raises(OutOfMoneyException):
+            self.player.bankroll -= 101
         assert self.player.bankroll == 100  # Should remain unchanged
 
     def test_update_bankroll_very_large_positive(self, class_setup, method_setup):
@@ -244,7 +295,9 @@ class TestPlayerEdgeCases:
         assert player.name == ""
         assert player.bankroll == 100
 
-    def test_from_name_bankroll_special_characters_name(self, class_setup, method_setup):
+    def test_from_name_bankroll_special_characters_name(
+        self, class_setup, method_setup
+    ):
         """Test creating player with special characters in name"""
         special_name = "Player!@#$%^&*()_+-=[]{}|;:,.<>?"
         player = Player.from_name_bankroll(special_name, 100)

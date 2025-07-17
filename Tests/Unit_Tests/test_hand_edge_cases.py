@@ -51,9 +51,9 @@ class TestHandEdgeCases:
 
     def test_ace_forces_low_value_to_avoid_bust(self, class_setup, method_setup):
         """Test ace becomes 1 when 11 would cause bust"""
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.KING))   # 10
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.KING))  # 10
         self.my_hand.add_card(card.Card(Suit.HEARTS, Value.EIGHT))  # 18
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.ACE))     # 19 (ace as 1)
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.ACE))  # 19 (ace as 1)
         assert self.my_hand.get_total() == 19
         assert self.my_hand.get_size() == 3
 
@@ -95,7 +95,7 @@ class TestHandEdgeCases:
     def test_soft_to_hard_with_added_card(self, class_setup, method_setup):
         """Test soft hand becoming hard when card added"""
         # Start with soft 16 (A, 5)
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))   # 11
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 11
         self.my_hand.add_card(card.Card(Suit.HEARTS, Value.FIVE))  # 16 (soft)
         assert self.my_hand.get_total() == 16
 
@@ -107,33 +107,35 @@ class TestHandEdgeCases:
     def test_multiple_aces_transition_scenario(self, class_setup, method_setup):
         """Test complex scenario with multiple aces adjusting values"""
         # Start with two aces (A, A = 12)
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))   # 11
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.ACE))   # 12 (11+1)
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 11
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.ACE))  # 12 (11+1)
         assert self.my_hand.get_total() == 12
 
         # Add 9 for 21 (A=11, A=1, 9=9)
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.NINE))   # 21
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.NINE))  # 21
         assert self.my_hand.get_total() == 21
 
         # Add another card to see aces adjust
-        self.my_hand.add_card(card.Card(Suit.DIAMONDS, Value.THREE))  # 15 (A=1, A=1, 9=9, 3=3)
+        self.my_hand.add_card(
+            card.Card(Suit.DIAMONDS, Value.THREE)
+        )  # 15 (A=1, A=1, 9=9, 3=3)
         assert self.my_hand.get_total() == 14
         assert self.my_hand.get_size() == 4
 
     def test_ace_transition_boundary_at_21(self, class_setup, method_setup):
         """Test ace behavior exactly at 21 boundary"""
         # Build to exactly 21 with ace adjustment
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))    # 11
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.FIVE))   # 16
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.FIVE))    # 21 (ace stays 11)
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 11
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.FIVE))  # 16
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.FIVE))  # 21 (ace stays 11)
         assert self.my_hand.get_total() == 21
         assert self.my_hand.get_size() == 3
 
     def test_ace_transition_over_21_boundary(self, class_setup, method_setup):
         """Test ace adjusts when going over 21"""
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))    # 11
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.FIVE))   # 16
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.SIX))     # 12 (ace becomes 1)
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 11
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.FIVE))  # 16
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.SIX))  # 12 (ace becomes 1)
         assert self.my_hand.get_total() == 12  # 1 + 5 + 6
         assert self.my_hand.get_size() == 3
 
@@ -141,29 +143,29 @@ class TestHandEdgeCases:
 
     def test_ace_with_multiple_face_cards(self, class_setup, method_setup):
         """Test ace behavior with multiple ten-value cards"""
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.KING))   # 10
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.KING))  # 10
         self.my_hand.add_card(card.Card(Suit.HEARTS, Value.QUEEN))  # 20
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.ACE))     # 21 (ace as 1)
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.ACE))  # 21 (ace as 1)
         assert self.my_hand.get_total() == 21
         assert self.my_hand.get_size() == 3
 
     def test_multiple_aces_with_face_card(self, class_setup, method_setup):
         """Test multiple aces with a face card"""
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))    # 11
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.ACE))    # 12 (11+1)
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.KING))    # 12 (1+1+10)
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 11
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.ACE))  # 12 (11+1)
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.KING))  # 12 (1+1+10)
         assert self.my_hand.get_total() == 12
         assert self.my_hand.get_size() == 3
 
     def test_face_cards_then_multiple_aces(self, class_setup, method_setup):
         """Test adding multiple aces to existing face cards"""
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.JACK))   # 10
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.JACK))  # 10
         assert self.my_hand.get_total() == 10
 
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.ACE))    # 21 (ace as 11)
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.ACE))  # 21 (ace as 11)
         assert self.my_hand.get_total() == 21
 
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.ACE))     # 12 (both aces as 1)
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.ACE))  # 12 (both aces as 1)
         assert self.my_hand.get_total() == 12
         assert self.my_hand.get_size() == 3
 
@@ -223,24 +225,24 @@ class TestHandEdgeCases:
         self.my_hand.add_card(card.Card(Suit.HEARTS, Value.FIVE))
         self.my_hand.add_card(card.Card(Suit.CLUBS, Value.FIVE))
         self.my_hand.add_card(card.Card(Suit.DIAMONDS, Value.FIVE))  # 20
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))     # 21 (ace as 1)
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 21 (ace as 1)
         assert self.my_hand.get_total() == 21
         assert self.my_hand.get_size() == 5
 
     def test_bust_avoidance_with_aces(self, class_setup, method_setup):
         """Test that aces adjust to avoid busting when possible"""
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))    # 11
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.NINE))   # 20
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.FIVE))    # 15 (ace becomes 1)
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 11
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.NINE))  # 20
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.FIVE))  # 15 (ace becomes 1)
         assert self.my_hand.get_total() == 15  # Avoided bust
         assert self.my_hand.get_size() == 3
 
     def test_unavoidable_bust_with_aces(self, class_setup, method_setup):
         """Test bust scenario even with ace adjustment"""
         # Build hand that busts even with aces as 1s
-        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))    # 1
-        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.TEN))    # 11
-        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.TEN))     # 21
+        self.my_hand.add_card(card.Card(Suit.SPADES, Value.ACE))  # 1
+        self.my_hand.add_card(card.Card(Suit.HEARTS, Value.TEN))  # 11
+        self.my_hand.add_card(card.Card(Suit.CLUBS, Value.TEN))  # 21
         self.my_hand.add_card(card.Card(Suit.DIAMONDS, Value.TWO))  # 23 (bust)
         assert self.my_hand.get_total() == 23  # Bust unavoidable
         assert self.my_hand.get_size() == 4
@@ -268,7 +270,7 @@ class TestHandEdgeCases:
 
         # Should be able to access cards by index
         assert self.my_hand[0] == king_card  # Newest first
-        assert self.my_hand[1] == ace_card   # Oldest last
+        assert self.my_hand[1] == ace_card  # Oldest last
         assert self.my_hand.get_size() == 2
 
     # ==================== EDGE CASE COMBINATIONS ====================

@@ -47,8 +47,8 @@ class Hand:
         Aces: 11, unless 11 would cause you to bust, in which case 1.
         :return: the point value of the hand
         """
-        total:int = 0
-        aces :int= 0
+        total: int = 0
+        aces: int = 0
 
         for card in self.cards:
             card_value = card.value
@@ -62,8 +62,7 @@ class Hand:
         return total
 
     def __str__(self):
-        return '\n'.join(str(card) for card in self.cards)
-
+        return "\n".join(str(card) for card in self.cards)
 
     def __getitem__(self, index):
         return self.cards[index]

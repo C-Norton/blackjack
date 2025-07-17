@@ -20,6 +20,7 @@ class TestFileIO:
         yield
         print(f"Tearing down method: {request.function.__name__}")
         import shutil
+
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     # ==================== IMPROVED APPROACHES USING ONLY pytest-mock ====================
@@ -131,10 +132,15 @@ class TestFileIO:
         test_path = Path(self.temp_dir) / "sequential.blackjack"
 
         # First call succeeds, second fails
-        mocker.patch("builtins.open", side_effect=[
-            mocker.mock_open(read_data='{"name": "old", "bankroll": 50}').return_value,
-            PermissionError("File locked"),
-        ])
+        mocker.patch(
+            "builtins.open",
+            side_effect=[
+                mocker.mock_open(
+                    read_data='{"name": "old", "bankroll": 50}'
+                ).return_value,
+                PermissionError("File locked"),
+            ],
+        )
 
         # First operation should work
         loaded_player = load_player(test_path)
@@ -144,15 +150,20 @@ class TestFileIO:
         with pytest.raises(PermissionError):
             save_player(player, test_path)
 
-    def test_conditional_mocking_based_on_arguments(self, class_setup, method_setup, mocker):
+    def test_conditional_mocking_based_on_arguments(
+        self, class_setup, method_setup, mocker
+    ):
         """Mock different behaviors based on file path"""
+
         def mock_open_conditional(*args, **kwargs):
             if "readonly" in str(args[0]):
                 raise PermissionError("Read-only file")
             elif "missing" in str(args[0]):
                 raise FileNotFoundError("File not found")
             else:
-                return mocker.mock_open(read_data='{"name": "test", "bankroll": 100}').return_value
+                return mocker.mock_open(
+                    read_data='{"name": "test", "bankroll": 100}'
+                ).return_value
 
         mocker.patch("builtins.open", side_effect=mock_open_conditional)
 
@@ -166,4 +177,3 @@ class TestFileIO:
         # Normal path works
         player = load_player(Path("normal_file.blackjack"))
         assert player.name == "test"
-

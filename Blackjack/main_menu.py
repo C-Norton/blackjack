@@ -25,7 +25,7 @@ def main_menu():
     Option 3: Check Stats
     """
     while True:
-        option : bool = None
+        option: bool = None
         while not option:
             try:
                 print("======= Welcome to BlackJack! =======")
@@ -52,6 +52,7 @@ def main_menu():
             case _:
                 print("Please enter a value between 1 and 3.")
 
+
 def new_hand():
     playername = input("What player will be playing?")
     path = Path(f"{playername.lower()}.blackjack")
@@ -59,14 +60,16 @@ def new_hand():
     game = Game(player)
     player.update_stats(game.new_hand())
     save_player(player, path)
+
+
 def new_player():
     """
     new_player creates a new player. It handles the menu operations
     :return: the new player object
     """
     print("======= New Player =======")
-    name : str= input("Please enter player name: ")
-    bankroll : Optional[int] = None
+    name: str = input("Please enter player name: ")
+    bankroll: Optional[int] = None
     while not bankroll:
         try:
             bankroll = int(input("Please enter starting bankroll: "))
@@ -75,6 +78,7 @@ def new_player():
     player = Player.from_name_bankroll(name, bankroll)
     save_player(player, Path(f"{name.lower()}.blackjack"))
     return player
+
 
 def show_stats():
     name = input("What player would you like to see stats for? ")

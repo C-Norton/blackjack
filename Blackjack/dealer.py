@@ -22,7 +22,7 @@ from .hand import Hand
 from .move import Move
 
 
-class Dealer (GameParticipant):
+class Dealer(GameParticipant):
     def __init__(self, dealer_hand: Optional[Hand] = None):
         """
         __init__ is a method that creates a new Dealer object
@@ -61,5 +61,3 @@ class Dealer (GameParticipant):
         if self.hand.get_size() == 0:
             card.face_down = True
         self.hand.add_card(card)
-
-    

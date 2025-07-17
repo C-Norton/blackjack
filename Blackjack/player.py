@@ -50,16 +50,24 @@ class Player(GameParticipant):
                 A new instance of the Player class initialized with the provided
                 attributes.
         """
-        return Player({"name": name, "bankroll": bankroll, "wins": 0, "losses": 0, "pushes": 0, })
+        return Player(
+            {
+                "name": name,
+                "bankroll": bankroll,
+                "wins": 0,
+                "losses": 0,
+                "pushes": 0,
+            }
+        )
 
     def deal_card(self, card: Card):
         """
         Deal card gives a card to the player to add to the hand. As the player never flips cards face down, this is a
         simple one-liner to satisfy the game_participant abstract method
         """
+        if not self.hand:
+            self.hand = Hand()
         self.hand.add_card(card)
-
-
 
     @property
     def bankroll(self) -> int:
@@ -70,7 +78,9 @@ class Player(GameParticipant):
     def bankroll(self, new_amount: int) -> None:
         """Set the bankroll amount directly in the stats dictionary."""
         if new_amount < 0:
-            raise OutOfMoneyException(f"Bankroll cannot be negative. Attempted to set: {new_amount}")
+            raise OutOfMoneyException(
+                f"Bankroll cannot be negative. Attempted to set: {new_amount}"
+            )
 
         self.stats["bankroll"] = new_amount
 
@@ -127,17 +137,20 @@ class Player(GameParticipant):
 
         """
         if self.bankroll == 0:
-
-            raise OutOfMoneyException("You're broke! Please add more money to your bankroll!")
+            raise OutOfMoneyException(
+                "You're broke! Please add more money to your bankroll!"
+            )
         bet = None
         while not bet:
             try:
                 print(f"Ante up! Your current bankroll is {self.bankroll}.")
-                bet = int(input(f"Please enter a number between 1 and {self.bankroll}:\t"))
-                if bet > self.bankroll:
+                bet = int(
+                    input(f"Please enter a number between 1 and {self.bankroll}:\t")
+                )
+                if bet > self.bankroll or bet <= 0:
                     bet = None
             except Exception:
-                print("Please enter an integer!")
+                print("Please enter an integer greater than zero!")
         self.bet = bet
 
     def double_down(self) -> bool:
@@ -206,6 +219,9 @@ def load_player(path: Path) -> Player:
     return Player(stats)
 
 
-def save_player(player: Player, path: Path, ) -> None:
+def save_player(
+    player: Player,
+    path: Path,
+) -> None:
     with open(path, "w") as file:
         json.dump(player.stats, file)

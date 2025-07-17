@@ -6,7 +6,6 @@ from .result import Result
 
 
 class GameParticipant(ABC):
-
     def __init__(self):
         self.hand = None
 
@@ -27,6 +26,7 @@ class GameParticipant(ABC):
             implementation.
         """
         pass
+
     def has_busted(self) -> bool:
         """
         Determine if the hand's total exceeds the allowed limit (busted).
@@ -39,8 +39,9 @@ class GameParticipant(ABC):
             False otherwise.
         """
         return self.hand.get_total() > 21
+
     @abstractmethod
-    def deal_card(self, card:Card) -> None:
+    def deal_card(self, card: Card) -> None:
         """
         Provide an interface for dealing cards in blackjack.
 

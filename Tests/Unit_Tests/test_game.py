@@ -120,8 +120,6 @@ class TestGameLogic:
         assert self.fake_dealer.deal_card.call_count == 2
         assert self.game._can_player_move
 
-
-
     def test_game_bust(self, class_setup, method_setup, generate_fake_card, mocker):
         """
         This is a complicated test. This test unit needs to be broken down. Potentially by breaking new hand down into several functions

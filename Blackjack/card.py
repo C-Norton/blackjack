@@ -2,8 +2,10 @@
 Card represents a card in a game of blackjack. It has a suit, and a value. It may be placed face up or face down on the
 table, and may be flipped during play.
 """
+
 from .suit import Suit
 from .value import Value
+
 
 class Card:
     def __init__(self, suit: Suit, value: Value):

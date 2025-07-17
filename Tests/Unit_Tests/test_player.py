@@ -42,15 +42,13 @@ class TestPlayer:
         print(f"Tearing down method: {request.function.__name__}")
         # TODO: Add your teardown code here
 
-
     def test_update_bankroll(self, class_setup, method_setup):
         self.player.bankroll += 100
         assert self.player.bankroll == 200
 
     def test_negative_bankroll_update(self, class_setup, method_setup):
-        self.player.bankroll -=100
+        self.player.bankroll -= 100
         assert self.player.bankroll == 0
-
 
     def test_update_stats_victory(self, class_setup, method_setup):
         self.player.update_stats((Result.VICTORY, 100))
@@ -144,4 +142,4 @@ class TestPlayer:
             print(e)
 
         finally:
-            Path.unlink(path,missing_ok=True)
+            Path.unlink(path, missing_ok=True)

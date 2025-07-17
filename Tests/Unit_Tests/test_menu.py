@@ -5,6 +5,7 @@ AUTHOR: Channing
 CREATED ON: 7/4/2025
 
 """
+
 from pathlib import Path
 
 import pytest
@@ -32,6 +33,7 @@ class TestMenu:
         self.new_hand = mocker.patch(
             "Blackjack.game.Game.new_hand", return_value="mocked"
         )
+        self.save_player = mocker.patch("Blackjack.main_menu.save_player")
 
         self.load_player = mocker.patch(
             "Blackjack.main_menu.load_player", return_value=self.fake_player
@@ -46,6 +48,8 @@ class TestMenu:
         Blackjack.main_menu.main_menu()
 
         assert self.new_hand.call_count == 1
+        assert self.save_player.call_count == 1
+
     def test_player_creation(self, class_setup, method_setup):
         self.fake_input.side_effect = ["Player 1", "1000"]
         self.player = Blackjack.main_menu.new_player()
@@ -81,4 +85,4 @@ class TestMenu:
         assert self.player.name == "Player 2"
         assert self.player.bankroll == 2000
         assert self.fake_input.call_count == 3
-        Path.unlink(path)
+        Path.unlink(path, missing_ok=True)

@@ -55,10 +55,10 @@ class Game:
             dealer = Dealer()
         if deck is None:
             deck = generate_deck()
-        self.deck : collections.deque[Card] = deck
-        self.dealer:Dealer = dealer
-        self.player : player= player
-        self._can_player_move:bool = True
+        self.deck: collections.deque[Card] = deck
+        self.dealer: Dealer = dealer
+        self.player: player = player
+        self._can_player_move: bool = True
 
     def _deal(self) -> None:
         """
@@ -150,7 +150,7 @@ class Game:
         print(result.name)
         self.player.hand = None
         self.dealer.hand = None
-        net_change:int = 0
+        net_change: int = 0
         if result == Result.VICTORY:
             net_change = self.player.bet
         elif result == Result.DEFEAT:
@@ -178,8 +178,8 @@ class Game:
         in pytest to avoid running these irrelevant tests
         :return: a Result enum reflecting the result of the hand
         """
-        player_hand:Hand= self.player.hand
-        dealer_hand:Hand= self.dealer.hand
+        player_hand: Hand = self.player.hand
+        dealer_hand: Hand = self.dealer.hand
         if player_hand.get_total() > 21:
             return Result.DEFEAT
         elif dealer_hand.get_total() > 21:
