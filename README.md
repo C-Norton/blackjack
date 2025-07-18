@@ -197,7 +197,7 @@ tests/
 
 ## License
 
-This project is designed for educational purposes. Please respect any licensing terms when using for commercial purposes.
+This project is designed for educational purposes. Please respect the GPL license specified in the project's LICENSE file
 
 ## Acknowledgments
 
