@@ -123,7 +123,7 @@ pytest
 pytest -v
 
 # Run specific test file
-pytest test_player.py
+pytest Tests/Unit_Tests/test_player.py
 
 # Run tests with coverage
 pytest --cov=Blackjack
@@ -191,6 +191,9 @@ tests/
 2. Implement functionality with accompanying tests
 3. Ensure all tests pass and maintain coverage
 4. Submit pull request with detailed description
+
+### TODO
+[] Write comprehensive integration test suite
 
 ## License
 
