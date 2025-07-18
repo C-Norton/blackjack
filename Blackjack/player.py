@@ -11,14 +11,13 @@ from typing import Optional
 from .card import Card
 from .game_participant import GameParticipant
 from .hand import Hand
-from .move import Move
+
 from .result import Result
 
 
 class OutOfMoneyException(Exception):
     def __init__(self, message: str):
-        print(message)
-        print("The house always wins!")
+        pass
 
 
 class Player(GameParticipant):
@@ -40,6 +39,7 @@ class Player(GameParticipant):
         Player object with basic attributes.
 
         Parameters:
+            cls: The class object representing the Player class.
             name: str
                 The name of the player.
             bankroll: int
@@ -50,15 +50,8 @@ class Player(GameParticipant):
                 A new instance of the Player class initialized with the provided
                 attributes.
         """
-        return Player(
-            {
-                "name": name,
-                "bankroll": bankroll,
-                "wins": 0,
-                "losses": 0,
-                "pushes": 0,
-            }
-        )
+        pass
+
 
     def deal_card(self, card: Card):
         """
@@ -72,18 +65,12 @@ class Player(GameParticipant):
     @property
     def bankroll(self) -> int:
         """Get the current bankroll amount from the stats dictionary."""
-        return self.stats["bankroll"]
+        pass
 
     @bankroll.setter
     def bankroll(self, new_amount: int) -> None:
         """Set the bankroll amount directly in the stats dictionary."""
-        if new_amount < 0:
-            raise OutOfMoneyException(
-                f"Bankroll cannot be negative. Attempted to set: {new_amount}"
-            )
-
-        self.stats["bankroll"] = new_amount
-
+        pass
     def update_stats(self, result_tuple: tuple) -> bool:
         """
         Updates player statistics and bankroll based on the result of a game round.
@@ -171,7 +158,7 @@ class Player(GameParticipant):
         else:
             return False
 
-    def take_turn(self, deck: collections.deque) -> Move:
+    def take_turn(self, deck: collections.deque):
         """
         Prompts the player to take their turn in a card game and processes their chosen move.
         The player can select one of three moves: 'Hit', 'Stand', or 'Double Down'. Based on
@@ -201,16 +188,17 @@ class Player(GameParticipant):
                     self.hand.add_card(deck.pop())
                 else:
                     raise AttributeError("Hand is None")
-                result = Move.HIT
+                # result = Move.HIT
             elif move == "stand":
-                result = Move.STAND
+                # result = Move.STAND
+                pass
             elif move == "double down":
                 if self.double_down():
                     if self.hand is not None:
                         self.hand.add_card(deck.pop())
                     else:
                         raise AttributeError("Hand is None")
-                    result = Move.DOUBLE_DOWN
+                    #result = Move.DOUBLE_DOWN
                 else:
                     print("You don't have enough money to double down.")
         return result
@@ -221,7 +209,7 @@ class Player(GameParticipant):
         :param other: the item to compare against
         :return: true if equal 
         """
-        return self.stats == other.stats
+        pass
 
 
 def load_player(path: Path) -> Player:
@@ -230,9 +218,7 @@ def load_player(path: Path) -> Player:
     :param path: The path object representing the file to load from
     :return: a player object
     """
-    with open(path, "r") as file:
-        stats = json.load(file)
-    return Player(stats)
+    pass
 
 
 def save_player(

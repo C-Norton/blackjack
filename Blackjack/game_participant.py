@@ -2,7 +2,7 @@ import collections
 from abc import abstractmethod, ABC
 
 from .card import Card
-from .move import Move
+
 
 
 class GameParticipant(ABC):
@@ -10,7 +10,7 @@ class GameParticipant(ABC):
         self.hand = None
 
     @abstractmethod
-    def take_turn(self, deck: collections.deque) -> Move:
+    def take_turn(self, deck: collections.deque):
         """
         An abstract method to be implemented by subclasses that defines how a turn
         is taken within the game. It processes the given deck and produces a result
