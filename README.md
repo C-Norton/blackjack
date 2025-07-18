@@ -193,7 +193,7 @@ tests/
 4. Submit pull request with detailed description
 
 ### TODO
-[ ] Write comprehensive integration test suite
+- [ ] Write comprehensive integration test suite
 
 ## License
 
