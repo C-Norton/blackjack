@@ -201,4 +201,6 @@ This project is designed for educational purposes. Please respect the GPL licens
 
 ## Acknowledgments
 
-Created for the Rochester Makerspace intermediate programming class, with inspiration from classic casino Blackjack rules and modern software engineering practices.
+Created for the Rochester Makerspace intermediate programming class, with inspiration from classic casino Blackjack rules and modern software engineering practices. 
+
+Created wholly by Channing Norton
