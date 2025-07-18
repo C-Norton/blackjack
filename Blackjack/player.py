@@ -103,17 +103,17 @@ class Player(GameParticipant):
         """
         if result_tuple[0] == Result.VICTORY:
             if result_tuple[1] > 0:
-                self.stats.update({"wins": self.stats.get("wins") + 1})
+                self.stats.update({"wins": self.stats.get("wins",0) + 1})
                 self.bankroll += result_tuple[1]
                 return True
             else:
                 return False
         elif result_tuple[0] == Result.PUSH:
-            self.stats.update({"pushes": self.stats.get("pushes") + 1})
+            self.stats.update({"pushes": self.stats.get("pushes",0) + 1})
             return True
         else:
             if 0 > result_tuple[1] >= -self.bankroll:
-                self.stats.update({"losses": self.stats.get("losses") + 1})
+                self.stats.update({"losses": self.stats.get("losses",0) + 1})
                 self.bankroll += result_tuple[1]
                 return True
             else:
@@ -197,13 +197,15 @@ class Player(GameParticipant):
             move = move.strip()
             move = move.lower()
             if move == "hit":
-                self.hand.add_card(deck.pop())
+                if self.hand is not None:
+                    self.hand.add_card(deck.pop())
                 result = Move.HIT
             elif move == "stand":
                 result = Move.STAND
             elif move == "double down":
                 if self.double_down():
-                    self.hand.add_card(deck.pop())
+                    if self.hand is not None:
+                        self.hand.add_card(deck.pop())
                     result = Move.DOUBLE_DOWN
                 else:
                     print("You don't have enough money to double down.")

@@ -32,7 +32,7 @@ class Dealer(GameParticipant):
         super().__init__()
         if dealer_hand is None:
             dealer_hand = Hand()
-        self.hand: Hand = dealer_hand
+        self.hand: Optional[Hand] = dealer_hand
 
     def reveal_hand(self):
         """
@@ -48,7 +48,7 @@ class Dealer(GameParticipant):
         :param deck: a deque of card objects
         :return: a move enum representing the dealer's choice
         """
-        if self.hand.get_total() < 17:
+        if self.hand and self.hand.get_total() < 17:
             self.hand.add_card(deck.popleft())
             return Move.HIT
         else:
@@ -58,6 +58,6 @@ class Dealer(GameParticipant):
         """
         deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
         """
-        if self.hand.get_size() == 0:
+        if self.hand and self.hand.get_size() == 0:
             card.face_down = True
         self.hand.add_card(card)
