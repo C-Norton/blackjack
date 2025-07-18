@@ -66,7 +66,7 @@ git checkout starter_code
 git checkout tests
 
 # Install dependencies
-pip install pytest pytest-mock
+pip install -r requirements.txt
 
 # Run the game (master branch only)
 python -m Blackjack.main_menu
