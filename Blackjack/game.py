@@ -57,7 +57,7 @@ class Game:
             deck = generate_deck()
         self.deck: collections.deque[Card] = deck
         self.dealer: Dealer = dealer
-        self.player: player = player
+        self.player: Player = player
         self._can_player_move: bool = True
 
     def _deal(self) -> None:
