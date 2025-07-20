@@ -24,33 +24,7 @@ def main_menu() -> None:
     Option 2: Make a New Player
     Option 3: Check Stats
     """
-    while True:
-        option:Optional[str] = None
-        while not option:
-            try:
-                print("======= Welcome to BlackJack! =======")
-                print("1. Play a new game")
-                print("2. Create a new player")
-                print("3. Check player stats")
-                print("exit to leave")
-                option = input("Please enter an option: ")
-            except ValueError:
-                print("Invalid input; please enter a number!")
-
-        match option:
-            case "1":
-                print("Playing a hand")
-                new_hand()
-            case "2":
-                print("Creating a player")
-                new_player()
-            case "3":
-                print("Showing stats")
-                show_stats()
-            case "exit":
-                return
-            case _:
-                print("Please enter a value between 1 and 3.")
+    pass
 
 
 def new_hand() -> None:
@@ -58,12 +32,7 @@ def new_hand() -> None:
     New hand runs a game of blackjack, and saves the players stats back to the player file
     :return: None
     """
-    playername = input("What player will be playing?")
-    path = Path(f"{playername.lower()}.blackjack")
-    player = load_player(path)
-    game = Game(player)
-    player.update_stats(game.new_hand())
-    save_player(player, path)
+    pass
 
 
 def new_player() -> None:
@@ -71,27 +40,14 @@ def new_player() -> None:
     new_player creates a new player. It handles the menu operations
     :return: the new player object
     """
-    print("======= New Player =======")
-    name: str = input("Please enter player name: ")
-    bankroll: Optional[int] = None
-    while not bankroll:
-        try:
-            bankroll = int(input("Please enter starting bankroll: "))
-        except ValueError:
-            print("Invalid bankroll; please enter an integer")
-    player = Player.from_name_bankroll(name, bankroll)
-    save_player(player, Path(f"{name.lower()}.blackjack"))
-    return player
-
+    pass
 
 def show_stats() -> None:
     """
     show stats shows the stats of an existing player based off playername
     :return: None
     """
-    name = input("What player would you like to see stats for? ")
-    player = load_player(Path(f"{name.lower()}.blackjack"))
-    print(player.stats)
+    pass
 
 
 if __name__ == "__main__":

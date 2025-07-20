@@ -38,7 +38,7 @@ class GameParticipant(ABC):
             bool: True if the hand's value exceeds the allowable limit,
             False otherwise.
         """
-        return self.hand.get_total() > 21
+        pass
 
     @abstractmethod
     def deal_card(self, card: Card) -> None:

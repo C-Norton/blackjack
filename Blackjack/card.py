@@ -17,9 +17,7 @@ class Card:
         :param suit: An enum parameter representing the suit of the card
         :param value: An enum parameter representing the value of the card
         """
-        self.suit: Suit = suit
-        self.value: Value = value
-        self.face_down: bool = False
+        pass
 
     def __str__(self):
         """
@@ -27,7 +25,4 @@ class Card:
         or ## if the card is facedown. For instance J♥ for the jack of hearts
         :return: String
         """
-        if not self.face_down:
-            return str(self.value) + str(self.suit)
-        else:
-            return "##"
+        pass

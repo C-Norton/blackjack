@@ -13,10 +13,7 @@ def _handle_aces(subtotal: int, aces: int) -> int:
     :param aces: The number of aces in the hand
     :return: the final total of the hand
     """
-    if aces + subtotal <= 11 and aces > 0:
-        return subtotal + 10 + aces
-    else:
-        return subtotal + aces
+    pass
 
 
 class Hand:
@@ -24,20 +21,20 @@ class Hand:
         """
         __init__ creates a new hand
         """
-        self.cards = collections.deque()
+        pass
 
     def add_card(self, card: Card) -> None:
         """
         :param card: the card to add to the collection
         :return:
         """
-        self.cards.appendleft(card)
+        pass
 
     def get_size(self) -> int:
         """
         :return:returns the number of cards in the cards collection
         """
-        return len(self.cards)
+        pass
 
     def get_total(self) -> int:
         """
@@ -47,22 +44,10 @@ class Hand:
         Aces: 11, unless 11 would cause you to bust, in which case 1.
         :return: the point value of the hand
         """
-        total: int = 0
-        aces: int = 0
-
-        for card in self.cards:
-            card_value = card.value
-            if not card_value == Value.ACE:
-                total += card_value.score
-            else:
-                aces += 1
-
-        total = _handle_aces(total, aces)
-
-        return total
+        pass
 
     def __str__(self):
-        return "\n".join(str(card) for card in self.cards)
+        pass
 
     def __getitem__(self, index):
-        return self.cards[index]
+        pass

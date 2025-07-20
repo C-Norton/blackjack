@@ -30,17 +30,13 @@ class Dealer(GameParticipant):
         dependency injection
         """
         super().__init__()
-        if dealer_hand is None:
-            dealer_hand = Hand()
-        self.hand: Optional[Hand] = dealer_hand
 
     def reveal_hand(self):
         """
         reveal_hand take the facedown card of the dealer's hand and flips it face up
         :return: None
         """
-        self.hand[-1].face_down = False
-        print(self.hand)
+        pass
 
     def take_turn(self, deck: collections.deque) -> Move:
         """
@@ -48,16 +44,9 @@ class Dealer(GameParticipant):
         :param deck: a deque of card objects
         :return: a move enum representing the dealer's choice
         """
-        if self.hand and self.hand.get_total() < 17:
-            self.hand.add_card(deck.popleft())
-            return Move.HIT
-        else:
-            return Move.STAND
-
+        pass
     def deal_card(self, card):
         """
         deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
         """
-        if self.hand and self.hand.get_size() == 0:
-            card.face_down = True
-        self.hand.add_card(card)
+        pass

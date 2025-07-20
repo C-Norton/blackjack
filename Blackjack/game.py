@@ -25,13 +25,7 @@ def generate_deck() -> collections.deque:
     generate deck generates a deck of 52 card objects, adds them to a deque, and shuffles them
     :return: the generated deque object
     """
-    deck: collections.deque[Card] = collections.deque()
-    for suit in Suit:
-        for value in Value:
-            card = Card(suit, value)
-            deck.append(card)
-    random.shuffle(deck)
-    return deck
+    pass
 
 
 class Game:
@@ -51,14 +45,7 @@ class Game:
         :param player: the player object that will play in the game
         :param dealer: the dealer object that will play in the game
         """
-        if dealer is None:
-            dealer = Dealer()
-        if deck is None:
-            deck = generate_deck()
-        self.deck: collections.deque[Card] = deck
-        self.dealer: Dealer = dealer
-        self.player: Player = player
-        self._can_player_move: bool = True
+        pass
 
     def _deal(self) -> None:
         """
@@ -69,16 +56,7 @@ class Game:
         suggested
         :return: None
         """
-        self._can_player_move = True
-        self.player.ante()
-        if self.player.hand is None:
-            self.player.hand = Hand()
-        if self.dealer.hand is None:
-            self.dealer.hand = Hand()
-        self.player.deal_card(self.deck.pop())
-        self.dealer.deal_card(self.deck.pop())
-        self.player.deal_card(self.deck.pop())
-        self.dealer.deal_card(self.deck.pop())
+        pass
 
     def _play_round(self) -> bool:
         """
@@ -93,27 +71,7 @@ class Game:
 
         :return: boolean, true if another round is warranted
         """
-        if self._can_player_move:
-            player_turn = self.player.take_turn(self.deck)
-            if self.player.has_busted():
-                self._can_player_move = False
-                return False
-
-            if player_turn == Move.STAND:
-                self._can_player_move = False
-
-            if player_turn == Move.DOUBLE_DOWN:
-                self._can_player_move = False
-        else:
-            player_turn = Move.STAND
-        dealer_turn = self.dealer.take_turn(self.deck)
-        if self.dealer.has_busted():
-            return False
-        if (
-            player_turn == Move.STAND or player_turn == Move.DOUBLE_DOWN
-        ) and dealer_turn == Move.STAND:
-            return False
-        return True
+        pass
 
     def new_hand(self) -> tuple[Result, int]:
         """
@@ -131,33 +89,7 @@ class Game:
             Save stats
         :return:
         """
-        self._deal()
-        print("Dealer's Hand")
-        print(str(self.dealer.hand))
-        print(f"{self.player.name}'s Hand")
-        print(str(self.player.hand))
-
-        while self._play_round():
-            print("Dealer's Hand")
-            print(str(self.dealer.hand))
-            print(f"{self.player.name}'s Hand")
-            print(str(self.player.hand))
-        print("Dealer's Hand after reveal")
-        self.dealer.reveal_hand()
-        print(f"{self.player.name}'s final hand")
-        print(str(self.player.hand))
-        result = self._evaluate()
-        print(result.name)
-        self.player.hand = None
-        self.dealer.hand = None
-        net_change: int = 0
-        if result == Result.VICTORY:
-            net_change = self.player.bet
-        elif result == Result.DEFEAT:
-            net_change = -self.player.bet
-        else:
-            net_change = 0
-        return result, net_change
+        pass
 
     def _evaluate(self) -> Result:
         """
@@ -178,26 +110,4 @@ class Game:
         in pytest to avoid running these irrelevant tests
         :return: a Result enum reflecting the result of the hand
         """
-        player_hand:Optional [Hand] = self.player.hand
-        dealer_hand: Optional [Hand] = self.dealer.hand
-        if player_hand is None or dealer_hand is None:
-            raise Exception("Hand is None")
-        if player_hand.get_total() > 21:
-            return Result.DEFEAT
-        elif dealer_hand.get_total() > 21:
-            return Result.VICTORY
-        elif player_hand.get_total() == 21 and dealer_hand.get_total() == 21:
-            if player_hand.get_size() == 2 and dealer_hand.get_size() > 2:
-                return Result.VICTORY
-            elif player_hand.get_size() > 2 and dealer_hand.get_size() == 2:
-                return Result.DEFEAT
-            else:
-                return Result.PUSH
-        elif player_hand.get_total() == dealer_hand.get_total():
-            return Result.PUSH
-        else:
-            return (
-                Result.VICTORY
-                if player_hand.get_total() > dealer_hand.get_total()
-                else Result.DEFEAT
-            )
+        pass

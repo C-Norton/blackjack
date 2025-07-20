@@ -24,10 +24,7 @@ class OutOfMoneyException(Exception):
 class Player(GameParticipant):
     def __init__(self, stats: dict):
         super().__init__()
-        self.name: str = stats["name"]
-        self.stats: dict = stats
-        self.bet: int = 0
-        self.hand: Optional[Hand] = None
+
 
     @classmethod
     def from_name_bankroll(cls, name: str, bankroll: int):
@@ -50,39 +47,24 @@ class Player(GameParticipant):
                 A new instance of the Player class initialized with the provided
                 attributes.
         """
-        return Player(
-            {
-                "name": name,
-                "bankroll": bankroll,
-                "wins": 0,
-                "losses": 0,
-                "pushes": 0,
-            }
-        )
+        pass
 
     def deal_card(self, card: Card):
         """
         Deal card gives a card to the player to add to the hand. As the player never flips cards face down, this is a
         simple one-liner to satisfy the game_participant abstract method
         """
-        if not self.hand:
-            self.hand = Hand()
-        self.hand.add_card(card)
+        pass
 
     @property
     def bankroll(self) -> int:
         """Get the current bankroll amount from the stats dictionary."""
-        return self.stats["bankroll"]
+        pass
 
     @bankroll.setter
     def bankroll(self, new_amount: int) -> None:
         """Set the bankroll amount directly in the stats dictionary."""
-        if new_amount < 0:
-            raise OutOfMoneyException(
-                f"Bankroll cannot be negative. Attempted to set: {new_amount}"
-            )
-
-        self.stats["bankroll"] = new_amount
+        pass
 
     def update_stats(self, result_tuple: tuple) -> bool:
         """
@@ -101,23 +83,7 @@ class Player(GameParticipant):
         Returns:
             bool: True if the stats and bankroll were successfully updated, False otherwise.
         """
-        if result_tuple[0] == Result.VICTORY:
-            if result_tuple[1] > 0:
-                self.stats.update({"wins": self.stats.get("wins",0) + 1})
-                self.bankroll += result_tuple[1]
-                return True
-            else:
-                return False
-        elif result_tuple[0] == Result.PUSH:
-            self.stats.update({"pushes": self.stats.get("pushes",0) + 1})
-            return True
-        else:
-            if 0 > result_tuple[1] >= -self.bankroll:
-                self.stats.update({"losses": self.stats.get("losses",0) + 1})
-                self.bankroll += result_tuple[1]
-                return True
-            else:
-                return False
+        pass
 
     def ante(self) -> None:
         """
@@ -136,22 +102,7 @@ class Player(GameParticipant):
             set only after valid input from the player.
 
         """
-        if self.bankroll == 0:
-            raise OutOfMoneyException(
-                "You're broke! Please add more money to your bankroll!"
-            )
-        bet = None
-        while not bet:
-            try:
-                print(f"Ante up! Your current bankroll is {self.bankroll}.")
-                bet = int(
-                    input(f"Please enter a number between 1 and {self.bankroll}:\t")
-                )
-                if bet > self.bankroll or bet <= 0:
-                    bet = None
-            except Exception:
-                print("Please enter an integer greater than zero!")
-        self.bet = bet
+        pass
 
     def double_down(self) -> bool:
         """
@@ -165,11 +116,7 @@ class Player(GameParticipant):
         Returns:
             bool: True if the bet was successfully doubled, otherwise False.
         """
-        if self.bet <= self.bankroll / 2:
-            self.bet *= 2
-            return True
-        else:
-            return False
+        pass
 
     def take_turn(self, deck: collections.deque) -> Move:
         """
@@ -190,30 +137,7 @@ class Player(GameParticipant):
         Raises:
             TypeError: If the deck is not a collections.deque.
         """
-        print("Please take your turn")
-        result = None
-        while not result:
-            move = input("Enter 'Hit', 'Stand' or 'Double Down': ")
-            move = move.strip()
-            move = move.lower()
-            if move == "hit":
-                if self.hand is not None:
-                    self.hand.add_card(deck.pop())
-                else:
-                    raise AttributeError("Hand is None")
-                result = Move.HIT
-            elif move == "stand":
-                result = Move.STAND
-            elif move == "double down":
-                if self.double_down():
-                    if self.hand is not None:
-                        self.hand.add_card(deck.pop())
-                    else:
-                        raise AttributeError("Hand is None")
-                    result = Move.DOUBLE_DOWN
-                else:
-                    print("You don't have enough money to double down.")
-        return result
+        pass
 
     def __eq__(self, other):
         """
@@ -221,7 +145,7 @@ class Player(GameParticipant):
         :param other: the item to compare against
         :return: true if equal 
         """
-        return self.stats == other.stats
+        pass
 
 
 def load_player(path: Path) -> Player:
@@ -230,9 +154,7 @@ def load_player(path: Path) -> Player:
     :param path: The path object representing the file to load from
     :return: a player object
     """
-    with open(path, "r") as file:
-        stats = json.load(file)
-    return Player(stats)
+    pass
 
 
 def save_player(
@@ -244,5 +166,4 @@ def save_player(
     :param player: The player to save
     :param path: The filepath to save to
     """
-    with open(path, "w") as file:
-        json.dump(player.stats, file)
+    pass
