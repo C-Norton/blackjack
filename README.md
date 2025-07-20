@@ -149,12 +149,18 @@ pytest --cov=Blackjack
 - Learn object-oriented programming principles
 - Practice file I/O, exception handling, and user input validation
 - Understand game logic implementation and state management
+- Designed around a 1-2 hour lab session teaching object oriented essentials
 
-### For Instructors
+### For Instructors (master branch)
 - Complete test suite provides immediate feedback on implementation
 - Progressive difficulty from simple classes to complex game logic
 - Real-world application demonstrating multiple programming concepts
 - Extensible design allows for additional features (splitting, insurance, etc.)
+
+### For a challenge (tests branch)
+- Leaves all behavior implementation up to the student
+- Designed for a 4-6 hour challenge emphasizing test driven development
+- Practice Python essentials and Unit test comprehension.
 
 ## File Structure
 ```
