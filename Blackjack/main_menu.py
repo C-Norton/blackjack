@@ -25,7 +25,7 @@ def main_menu() -> None:
     Option 3: Check Stats
     """
     while True:
-        option: bool = None
+        option:Optional[str] = None
         while not option:
             try:
                 print("======= Welcome to BlackJack! =======")
