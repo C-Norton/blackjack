@@ -188,9 +188,9 @@ class Player(GameParticipant):
                     self.hand.add_card(deck.pop())
                 else:
                     raise AttributeError("Hand is None")
-                # result = Move.HIT
+                result = Move.HIT
             elif move == "stand":
-                # result = Move.STAND
+                result = Move.STAND
                 pass
             elif move == "double down":
                 if self.double_down():
@@ -198,7 +198,7 @@ class Player(GameParticipant):
                         self.hand.add_card(deck.pop())
                     else:
                         raise AttributeError("Hand is None")
-                    #result = Move.DOUBLE_DOWN
+                    result = Move.DOUBLE_DOWN
                 else:
                     print("You don't have enough money to double down.")
         return result
