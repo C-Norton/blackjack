@@ -127,8 +127,6 @@ class Game:
                 Accept dealer move
             Dealer reveals hidden card
             Resolve the hand
-            Update player
-            Save stats
         :return:
         """
         self._deal()
