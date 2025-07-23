@@ -30,14 +30,14 @@ class Dealer(GameParticipant):
         dependency injection
         """
         super().__init__()
-
-    def reveal_hand(self):
+        
+    def deal_card(self, card):
         """
-        reveal_hand take the facedown card of the dealer's hand and flips it face up
-        :return: None
+        deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
         """
         pass
 
+    
     def take_turn(self, deck: collections.deque) -> Move:
         """
         take_turn runs the algorithm for the dealer to select between hit and stand
@@ -45,8 +45,11 @@ class Dealer(GameParticipant):
         :return: a move enum representing the dealer's choice
         """
         pass
-    def deal_card(self, card):
+
+
+    def reveal_hand(self):
         """
-        deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
+        reveal_hand take the facedown card of the dealer's hand and flips it face up
+        :return: None
         """
         pass
