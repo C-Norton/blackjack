@@ -33,15 +33,14 @@ class Dealer(GameParticipant):
         if dealer_hand is None:
             dealer_hand = Hand()
         self.hand: Optional[Hand] = dealer_hand
-
-    def reveal_hand(self):
+    def deal_card(self, card):
         """
-        reveal_hand take the facedown card of the dealer's hand and flips it face up
-        :return: None
+        deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
         """
-        self.hand[-1].face_down = False
-        print(self.hand)
-
+        if self.hand and self.hand.get_size() == 0:
+            card.face_down = True
+        self.hand.add_card(card)
+    
     def take_turn(self, deck: collections.deque) -> Move:
         """
         take_turn runs the algorithm for the dealer to select between hit and stand
@@ -53,11 +52,15 @@ class Dealer(GameParticipant):
             return Move.HIT
         else:
             return Move.STAND
+    
+    def reveal_hand(self):
+        """
+        reveal_hand take the facedown card of the dealer's hand and flips it face up
+        :return: None
+        """
+        self.hand[-1].face_down = False
+        print(self.hand)
 
-    def deal_card(self, card):
-        """
-        deal_card adds a card to the dealer's hand. It is responsible for managing if the card is face up or face down
-        """
-        if self.hand and self.hand.get_size() == 0:
-            card.face_down = True
-        self.hand.add_card(card)
+    
+
+    
