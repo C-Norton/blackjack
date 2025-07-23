@@ -17,7 +17,7 @@ This repository contains three main branches:
 - Perfect starting point for students learning Python OOP
 
 ### 🧪 **tests** - Testing Branch  
-- Complete test suite with 200+ test cases
+- Complete test suite with 299 test cases
 - Method stubs for implementation practice
 - Focuses on test-driven development approach
 
